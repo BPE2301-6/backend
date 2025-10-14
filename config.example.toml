@@ -1,6 +1,7 @@
 [app]
 host = "0.0.0.0"
 port = 8000
+workers = 1
 reload = false
 debug = false
 
@@ -10,4 +11,8 @@ postgres_db = "postgres"
 postgres_port = 5432
 postgres_host = "localhost"
 postgres_password = "postgres"
+with_port = true
 echo = true
+
+[docs]
+allowed_ips = ["123.123.123.123", "124.124.124.124", "125.125.125.125"]
