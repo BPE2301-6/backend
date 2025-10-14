@@ -14,11 +14,6 @@ app = FastAPI(
 # Register API
 app.include_router(api_router)
 
-# Healthcheck endpoint
-# @app.get("/ping")
-# async def ping():
-#     return {"status": "ok"}
-
 # Опционально: Middleware, Exceptions
 # setup_middlewares(app)
 # setup_exception_handlers(app)
