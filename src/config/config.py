@@ -16,6 +16,7 @@ class App(BaseModel):
 
     host: str = Field(default="0.0.0.0", description="Хост, на котором запускается приложение.")
     port: int = Field(default=8000, description="Порт, на котором слушает FastAPI.")
+    workers: int = Field(default=1, description="Количество воркеров, обрабатывающих запросы.")
     reload: bool = Field(default=True, description="Автоматическая перезагрузка при изменении кода.")
     debug: bool = Field(default=True, description="Режим отладки (больше логов и трассировка).")
 
