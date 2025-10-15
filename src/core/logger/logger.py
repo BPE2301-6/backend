@@ -11,7 +11,7 @@ Recommended: inject logger into services or repositories for better traceability
 import logging
 from logging import Logger
 
-from src.core.config import cfg
+from src.config import cfg
 
 logger: Logger = logging.getLogger("app")
 

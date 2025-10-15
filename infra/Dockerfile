@@ -23,4 +23,4 @@ COPY --from=builder /usr/local /usr/local
 COPY ./src ./src
 COPY .env .env
 
-CMD ["python", "-m", "src.service.main"]
+CMD ["python", "-m", "src.api.main"]

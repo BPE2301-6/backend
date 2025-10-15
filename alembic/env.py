@@ -9,15 +9,18 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 
-sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from src.core.config import cfg
+BASE_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(BASE_DIR / "src"))
+
+from src.config import cfg
 from src.core.db.base import Base
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
+
 target_metadata = Base.metadata
 
 
@@ -41,12 +44,12 @@ def do_run_migrations(connection: Connection) -> None:
 
 
 async def run_async_migrations() -> None:
-    connectable = create_async_engine(cfg.database.async_database_url, poolclass=pool.NullPool)
+    engine = create_async_engine(cfg.database.async_database_url, poolclass=pool.NullPool)
 
-    async with connectable.connect() as connection:
+    async with engine.connect() as connection:
         await connection.run_sync(do_run_migrations)
 
-    await connectable.dispose()
+    await engine.dispose()
 
 
 def run_migrations_online() -> None:
