@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(BASE_DIR / "src"))
 
 from src.config import cfg
-from src.core import Base
+from src.core.db.base import Base
 
 config = context.config
 
