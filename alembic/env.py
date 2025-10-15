@@ -9,7 +9,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 
-
 BASE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(BASE_DIR / "src"))
 

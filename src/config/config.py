@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from pydantic import BaseModel, Field
 from pydantic_settings import (
     BaseSettings,
@@ -17,7 +18,9 @@ class App(BaseModel):
     host: str = Field(default="0.0.0.0", description="Хост, на котором запускается приложение.")
     port: int = Field(default=8000, description="Порт, на котором слушает FastAPI.")
     workers: int = Field(default=1, description="Количество воркеров, обрабатывающих запросы.")
-    reload: bool = Field(default=True, description="Автоматическая перезагрузка при изменении кода.")
+    reload: bool = Field(
+        default=True, description="Автоматическая перезагрузка при изменении кода."
+    )
     debug: bool = Field(default=True, description="Режим отладки (больше логов и трассировка).")
 
 
@@ -25,7 +28,9 @@ class Database(BaseModel):
     """Параметры подключения к PostgreSQL."""
 
     postgres_username: str = Field(default="postgres", description="Имя пользователя PostgreSQL.")
-    postgres_password: str = Field(default="postgres", description="Пароль пользователя PostgreSQL.")
+    postgres_password: str = Field(
+        default="postgres", description="Пароль пользователя PostgreSQL."
+    )
     postgres_db: str = Field(default="postgres", description="Название базы данных.")
     postgres_host: str = Field(default="localhost", description="Хост PostgreSQL.")
     postgres_port: int = Field(default=5432, description="Порт PostgreSQL.")
@@ -43,7 +48,7 @@ class Database(BaseModel):
             f"postgresql+asyncpg://{self.postgres_username}:{self.postgres_password}"
             f"@{host_part}/{self.postgres_db}"
         )
-        
+
 
 class Docs(BaseModel):
     """Настройки доступа к документации (`/docs`)."""
@@ -76,5 +81,6 @@ class Config(BaseSettings):
             dotenv_settings,
             file_secret_settings,
         )
+
 
 settings = Config()

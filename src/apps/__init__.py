@@ -2,9 +2,7 @@ from fastapi import APIRouter
 
 from .exmpl import hint_router_v1
 
-routers: dict[str, APIRouter] = {
-    "Hint": hint_router_v1,
-}
+routers: dict[str, APIRouter] = {"Hint": hint_router_v1}
 
 api_router = APIRouter(prefix="/api/v1")
 
