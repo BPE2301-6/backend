@@ -2,7 +2,6 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 from rich.console import Console
-from rich.theme import Theme
 from rich.logging import RichHandler
 from rich.highlighter import Highlighter
 
