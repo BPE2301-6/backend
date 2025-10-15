@@ -1,11 +1,3 @@
-"""
-Входная точка FastAPI приложения.
-
-- Инициализируйте приложение
-- Регистрируйте роутеры и lifespan.
-- Запускайте middleware, обработчики исключений и так далее.
-"""
-
 from fastapi import FastAPI
 from src.api.lifespan import lifespan
 from src.core.config import cfg
@@ -31,7 +23,7 @@ def main():
     import uvicorn
 
     uvicorn.run(
-        app="src:app",
+        app="src.api.main:app",
         host=cfg.app.host,
         port=cfg.app.port,
         reload=cfg.app.reload,
