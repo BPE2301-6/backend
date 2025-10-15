@@ -2,7 +2,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.core.logger import configure_logger, get_logger
+from src.core.logger.config import configure_logger
+from src.core.logger.logger import get_logger
 
 # from src.core.db import init_db_connection
 # from src.repository.s3.s3 import init_s3_client
@@ -13,7 +14,7 @@ from src.core.logger import configure_logger, get_logger
 async def lifespan(_app: FastAPI):
     # Инициализация логгирования
     configure_logger()
-    logger = get_logger()
+    logger = get_logger(__name__)
     logger.info("App startup: initializing resources")
 
     # Например: init_db_connection()
