@@ -1,12 +1,14 @@
 import logging
 import os
 from logging.handlers import RotatingFileHandler
+
 from rich.console import Console
-from rich.logging import RichHandler
 from rich.highlighter import Highlighter
+from rich.logging import RichHandler
 
 LOG_DIR = "logs"
 LOG_FILE = "app.log"
+
 
 class LevelHighlighter(Highlighter):
     def highlight(self, text):
@@ -17,6 +19,7 @@ class LevelHighlighter(Highlighter):
         text.highlight_regex(r"CRITICAL", "underline bold magenta")
         text.highlight_regex(r"\d{2}:\d{2}:\d{2}", "blue")
         text.highlight_regex(r"pid=\d+", "grey37")
+
 
 _console = Console(markup=True, highlight=True, log_path=False)
 
@@ -34,8 +37,8 @@ def configure_logger(level: int = logging.INFO) -> None:
     file_handler = RotatingFileHandler(
         filename=os.path.join(LOG_DIR, LOG_FILE),
         maxBytes=10 * 1024 * 1024,  # 10 MB
-        backupCount=5, # хранится 5 старых файлов
-        encoding="utf-8"
+        backupCount=5,  # хранится 5 старых файлов
+        encoding="utf-8",
     )
     file_handler.setFormatter(logging.Formatter(fmt, datefmt="[%Y-%m-%d %H:%M:%S]"))
 
@@ -43,18 +46,15 @@ def configure_logger(level: int = logging.INFO) -> None:
     rich_handler = RichHandler(
         console=_console,
         rich_tracebacks=True,
-        show_time=False,      # не выводить время, чтобы не дублировалось
-        show_level=False,     # не выводить уровень, чтобы не дублировался
+        show_time=False,  # не выводить время, чтобы не дублировалось
+        show_level=False,  # не выводить уровень, чтобы не дублировался
         markup=True,
         show_path=True,
         highlighter=LevelHighlighter(),
     )
 
     logging.basicConfig(
-        level=level,
-        format=fmt,
-        datefmt="[%H:%M:%S]",
-        handlers=[file_handler, rich_handler],
+        level=level, format=fmt, datefmt="[%H:%M:%S]", handlers=[file_handler, rich_handler]
     )
 
     logging.getLogger("uvicorn").setLevel(logging.WARNING)
