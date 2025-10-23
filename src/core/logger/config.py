@@ -6,8 +6,7 @@ from rich.console import Console
 from rich.highlighter import Highlighter
 from rich.logging import RichHandler
 
-LOG_DIR = "logs"
-LOG_FILE = "app.log"
+from src.config.config import LOG_DIR, LOG_FILE
 
 
 class LevelHighlighter(Highlighter):
