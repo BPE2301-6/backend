@@ -11,6 +11,9 @@ from pydantic_settings import (
 BASE_DIR = Path(__file__).parent.parent.parent
 TOML_SETTINGS_PATH = BASE_DIR / "config.toml"
 
+LOG_DIR = BASE_DIR / "logs"
+LOG_FILE = LOG_DIR / "app.log"
+
 
 class App(BaseModel):
     """Основные параметры приложения."""
