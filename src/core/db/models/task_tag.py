@@ -15,6 +15,4 @@ class TaskTag(Base):
     task: Mapped["Task"] = relationship(back_populates="tags")
     tag: Mapped["Tag"] = relationship(back_populates="tasks")
 
-    __table_args__ = (
-        UniqueConstraint("task_id", "tag_id"),
-    )
+    __table_args__ = (UniqueConstraint("task_id", "tag_id"),)
