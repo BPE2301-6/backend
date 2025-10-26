@@ -1,0 +1,15 @@
+from __future__ import annotations
+
+import uuid
+
+from sqlalchemy import Integer, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from ..base import Base
+
+
+class TaskSequence(Base):
+    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("project.id"), primary_key=True)
+    next_seq: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+
+    project: Mapped["Project"] = relationship(back_populates="task_sequence", uselist=False)
