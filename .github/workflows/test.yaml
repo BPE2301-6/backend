@@ -28,28 +28,25 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install uv
-        run: curl -LsSf https://astral.sh/uv/install.sh | sh
-
-      - name: Cache uv dependencies
-        uses: actions/cache@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
         with:
-          path: |
-            ~/.cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock', '**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-uv-
+          enable-cache: true
 
-      - name: Sync dependencies
-        run: uv sync --all-extras --dev
+      - name: Sync deps (dev + extras)
+        run: uv sync --dev --all-extras
 
-      - name: Run tests
+      - name: Run tests with coverage
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "0"
         run: |
-          uv run pytest -q --maxfail=1 --disable-warnings \
+          uv run pytest -q --maxfail=1 --disable-warnings -p pytest_cov \
             --cov=src --cov-report=xml:coverage.xml --cov-report=term
-      - name: Upload coverage report
+
+      - name: Upload coverage.xml
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage.xml
+          if-no-files-found: ignore
