@@ -1,0 +1,52 @@
+name: Tests
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Sync deps (dev + extras)
+        run: uv sync --dev --all-extras
+
+      - name: Run tests with coverage
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "0"
+        run: |
+          uv run pytest -q --maxfail=1 --disable-warnings -p pytest_cov \
+            --cov=src --cov-report=xml:coverage.xml --cov-report=term
+
+      - name: Upload coverage.xml
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          if-no-files-found: ignore
