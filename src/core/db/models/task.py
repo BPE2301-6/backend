@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
 import enum
 import uuid
@@ -18,6 +19,14 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
+
+if TYPE_CHECKING:
+    from .project import Project
+    from .status import Status
+    from .user import User
+    from .task_tag import TaskTag
+    from .comment import Comment
+    from .checklist import Checklist
 
 
 class TaskPriority(enum.Enum):
@@ -47,16 +56,16 @@ class Task(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-    project: Mapped["Project"] = relationship(back_populates="tasks")
-    status: Mapped["Status"] = relationship(back_populates="tasks")
-    reporter: Mapped["User"] = relationship(
+    project: Mapped[Project] = relationship(back_populates="tasks")
+    status: Mapped[Status] = relationship(back_populates="tasks")
+    reporter: Mapped[User] = relationship(
         back_populates="reported_tasks", foreign_keys=[reporter_id]
     )
-    assignee: Mapped["User" | None] = relationship(
+    assignee: Mapped[User | None] = relationship(
         back_populates="assigned_tasks", foreign_keys=[assignee_id]
     )
-    tags: Mapped[list["TaskTag"]] = relationship(back_populates="task")
-    comments: Mapped[list["Comment"]] = relationship(back_populates="task")
-    checklist: Mapped["Checklist" | None] = relationship(back_populates="task", uselist=False)
+    tags: Mapped[list[TaskTag]] = relationship(back_populates="task")
+    comments: Mapped[list[Comment]] = relationship(back_populates="task")
+    checklist: Mapped[Checklist | None] = relationship(back_populates="task", uselist=False)
 
     __table_args__ = (UniqueConstraint("project_id", "seq"),)

@@ -14,6 +14,20 @@ sys.path.append(str(BASE_DIR / "src"))
 
 from src.config import cfg
 from src.core.db.base import Base
+from src.core.db.models import (
+    User,
+    Project,
+    ProjectMember,
+    TaskSequence,
+    Status,
+    Task,
+    TaskPriority,
+    Tag,
+    TaskTag,
+    Comment,
+    Checklist,
+    ChecklistItem,
+)
 
 config = context.config
 
