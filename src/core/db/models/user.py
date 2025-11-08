@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
 import uuid
 from datetime import datetime
@@ -7,6 +8,12 @@ from sqlalchemy import DateTime, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
+
+if TYPE_CHECKING:
+    from .project import Project
+    from .project_member import ProjectMember
+    from .task import Task
+    from .comment import Comment
 
 
 class User(Base):
@@ -23,12 +30,12 @@ class User(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-    led_projects: Mapped[list["Project"]] = relationship(back_populates="lead")
-    projects: Mapped[list["ProjectMember"]] = relationship(back_populates="user")
-    reported_tasks: Mapped[list["Task"]] = relationship(
+    led_projects: Mapped[list[Project]] = relationship(back_populates="lead")
+    projects: Mapped[list[ProjectMember]] = relationship(back_populates="user")
+    reported_tasks: Mapped[list[Task]] = relationship(
         back_populates="reporter", foreign_keys="[Task.reporter_id]"
     )
-    assigned_tasks: Mapped[list["Task"]] = relationship(
+    assigned_tasks: Mapped[list[Task]] = relationship(
         back_populates="assignee", foreign_keys="[Task.assignee_id]"
     )
-    comments: Mapped[list["Comment"]] = relationship(back_populates="author")
+    comments: Mapped[list[Comment]] = relationship(back_populates="author")

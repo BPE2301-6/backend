@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
 import enum
 import uuid
@@ -8,6 +9,10 @@ from sqlalchemy import DateTime, Enum, ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
+
+if TYPE_CHECKING:
+    from .project import Project
+    from .user import User
 
 
 class ProjectRole(enum.Enum):
@@ -25,7 +30,7 @@ class ProjectMember(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-    project: Mapped["Project"] = relationship(back_populates="members")
-    user: Mapped["User"] = relationship(back_populates="projects")
+    project: Mapped[Project] = relationship(back_populates="members")
+    user: Mapped[User] = relationship(back_populates="projects")
 
     __table_args__ = (UniqueConstraint("project_id", "user_id"),)
