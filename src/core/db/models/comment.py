@@ -25,3 +25,7 @@ class Comment(Base):
 
     task: Mapped[Task] = relationship(back_populates="comments")
     author: Mapped[User] = relationship(back_populates="comments")
+
+    __table_args__ = (
+        Index("ix_comment_task_id_created_at", "task_id", "created_at"),
+    )
