@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -10,10 +10,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..base import Base
 
 if TYPE_CHECKING:
+    from .comment import Comment
     from .project import Project
     from .project_member import ProjectMember
     from .task import Task
-    from .comment import Comment
 
 
 class User(Base):

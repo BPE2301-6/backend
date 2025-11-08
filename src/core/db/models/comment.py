@@ -1,10 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Text, func, Index
+from sqlalchemy import DateTime, ForeignKey, Index, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
@@ -26,6 +26,4 @@ class Comment(Base):
     task: Mapped[Task] = relationship(back_populates="comments")
     author: Mapped[User] = relationship(back_populates="comments")
 
-    __table_args__ = (
-        Index("ix_comment_task_id_created_at", "task_id", "created_at"),
-    )
+    __table_args__ = (Index("ix_comment_task_id_created_at", "task_id", "created_at"),)

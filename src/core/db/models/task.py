@@ -1,9 +1,9 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 import enum
 import uuid
 from datetime import date, datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     Date,
@@ -21,12 +21,12 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..base import Base
 
 if TYPE_CHECKING:
+    from .checklist import Checklist
+    from .comment import Comment
     from .project import Project
     from .status import Status
-    from .user import User
     from .task_tag import TaskTag
-    from .comment import Comment
-    from .checklist import Checklist
+    from .user import User
 
 
 class TaskPriority(enum.Enum):

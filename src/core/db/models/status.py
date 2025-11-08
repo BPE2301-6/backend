@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -12,6 +12,7 @@ from ..base import Base
 if TYPE_CHECKING:
     from .project import Project
     from .task import Task
+
 
 class Status(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True)

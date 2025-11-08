@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,8 +9,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..base import Base
 
 if TYPE_CHECKING:
-    from .task import Task
     from .checklist_item import ChecklistItem
+    from .task import Task
 
 
 class Checklist(Base):
