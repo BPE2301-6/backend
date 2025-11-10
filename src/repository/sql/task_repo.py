@@ -1,30 +1,32 @@
 import uuid
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import Task
-from ..base import BaseRepository
+from ..interfaces import BaseRepository
 
 
 class TaskRepositoryImpl(BaseRepository[Task]):
-    async def get_by_id(self, task_id: uuid.UUID) -> Task | None:
-        return await self._db_get(Task, task_id)
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def get_by_id(self, item_id: uuid.UUID) -> Task | None:
+        return await Task.get_by_id(self.session, item_id)
 
     async def create(self, data: dict) -> Task:
-        item = Task(**data)
-        return await self._db_add(item)
+        item = Task.from_dict(data)
+        return await item.save(self.session)
 
-    async def update(self, task_id: uuid.UUID, data: dict) -> Task:
-        item = await self._db_get(Task, task_id)
+    async def update(self, item_id: uuid.UUID, data: dict) -> Task | None:
+        item = await Task.get_by_id(self.session, item_id)
         if item is None:
             return None
-        return await self._db_update(item, data)
+        item.update(**data)
+        return await item.save(self.session)
 
-    async def delete(self, task_id: uuid.UUID) -> None:
-        item = await self._db_get(Task, task_id)
+    async def delete(self, item_id: uuid.UUID) -> None:
+        item = await Task.get_by_id(self.session, item_id)
         if item is not None:
-            await self._db_delete(item)
+            await item.delete(self.session)
 
-    async def list_by_project(self, project_id: uuid.UUID) -> list[Task]:
-        return await self._db_list_by(Task, project_id=project_id)
-
-    async def list_by_status(self, status_id: uuid.UUID) -> list[Task]:
-        return await self._db_list_by(Task, status_id=status_id)
+    async def get_all(self) -> list[Task]:
+        return await Task.get_all(self.session)

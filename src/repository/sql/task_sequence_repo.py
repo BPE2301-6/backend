@@ -1,24 +1,32 @@
 import uuid
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import TaskSequence
-from ..base import BaseRepository
+from ..interfaces import BaseRepository
 
 
 class TaskSequenceRepositoryImpl(BaseRepository[TaskSequence]):
-    async def get_by_project(self, project_id: uuid.UUID) -> TaskSequence | None:
-        return await self._db_get(TaskSequence, project_id)
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def get_by_id(self, item_id: uuid.UUID) -> TaskSequence | None:
+        return await TaskSequence.get_by_id(self.session, item_id)
 
     async def create(self, data: dict) -> TaskSequence:
-        item = TaskSequence(**data)
-        return await self._db_add(item)
+        item = TaskSequence.from_dict(data)
+        return await item.save(self.session)
 
-    async def update_by_project(self, project_id: uuid.UUID, data: dict) -> TaskSequence | None:
-        item = await self._db_get(TaskSequence, project_id)
+    async def update(self, item_id: uuid.UUID, data: dict) -> TaskSequence | None:
+        item = await TaskSequence.get_by_id(self.session, item_id)
         if item is None:
             return None
-        return await self._db_update(item, data)
+        item.update(**data)
+        return await item.save(self.session)
 
-    async def delete_by_project(self, project_id: uuid.UUID) -> None:
-        item = await self._db_get(TaskSequence, project_id)
-        if item:
-            await self._db_delete(item)
+    async def delete(self, item_id: uuid.UUID) -> None:
+        item = await TaskSequence.get_by_id(self.session, item_id)
+        if item is not None:
+            await item.delete(self.session)
+
+    async def get_all(self) -> list[TaskSequence]:
+        return await TaskSequence.get_all(self.session)

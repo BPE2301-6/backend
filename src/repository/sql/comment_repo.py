@@ -1,27 +1,32 @@
 import uuid
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.db import models
-from ..base import BaseRepository
+from src.core.db.models import Comment
+from ..interfaces import BaseRepository
 
 
-class CommentRepositoryImpl(BaseRepository[models.Comment]):
-    async def get_by_id(self, comment_id: uuid.UUID) -> models.Comment | None:
-        return await self._db_get(models.Comment, comment_id)
+class CommentRepositoryImpl(BaseRepository[Comment]):
+    def __init__(self, session: AsyncSession):
+        self.session = session
 
-    async def create(self, data: dict) -> models.Comment:
-        item = models.Comment(**data)
-        return await self._db_add(item)
+    async def get_by_id(self, item_id: uuid.UUID) -> Comment | None:
+        return await Comment.get_by_id(self.session, item_id)
 
-    async def update(self, comment_id: uuid.UUID, data: dict) -> models.Comment | None:
-        item = await self._db_get(models.Comment, comment_id)
+    async def create(self, data: dict) -> Comment:
+        item = Comment.from_dict(data)
+        return await item.save(self.session)
+
+    async def update(self, item_id: uuid.UUID, data: dict) -> Comment | None:
+        item = await Comment.get_by_id(self.session, item_id)
         if item is None:
             return None
-        return await self._db_update(item, data)
+        item.update(**data)
+        return await item.save(self.session)
 
-    async def delete(self, comment_id: uuid.UUID) -> None:
-        item = await self._db_get(models.Comment, comment_id)
+    async def delete(self, item_id: uuid.UUID) -> None:
+        item = await Comment.get_by_id(self.session, item_id)
         if item is not None:
-            await self._db_delete(item)
+            await item.delete(self.session)
 
-    async def list_by_task_id(self, task_id: uuid.UUID) -> list[models.Comment]:
-        return await self._db_list_by(models.Comment, task_id=task_id)
+    async def get_all(self) -> list[Comment]:
+        return await Comment.get_all(self.session)

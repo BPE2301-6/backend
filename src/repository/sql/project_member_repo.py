@@ -1,30 +1,32 @@
 import uuid
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.db import models
-from ..base import BaseRepository
+from src.core.db.models import ProjectMember
+from ..interfaces import BaseRepository
 
 
-class ProjectMemberRepositoryImpl(BaseRepository[models.ProjectMember]):
-    async def get(self, project_id: uuid.UUID, user_id: uuid.UUID) -> models.ProjectMember | None:
-        return await self.session.get(models.ProjectMember, (project_id, user_id))
+class ProjectMemberRepositoryImpl(BaseRepository[ProjectMember]):
+    def __init__(self, session: AsyncSession):
+        self.session = session
 
-    async def create(self, data: dict) -> models.ProjectMember:
-        item = models.ProjectMember(**data)
-        return await self._db_add(item)
+    async def get_by_id(self, item_id: tuple[uuid.UUID, uuid.UUID]) -> ProjectMember | None:
+        return await ProjectMember.get_by_id(self.session, item_id)
 
-    async def update(self, project_id: uuid.UUID, user_id: uuid.UUID, data: dict) -> models.ProjectMember | None:
-        item = await self.get(project_id, user_id)
+    async def create(self, data: dict) -> ProjectMember:
+        item = ProjectMember.from_dict(data)
+        return await item.save(self.session)
+
+    async def update(self, item_id: tuple[uuid.UUID, uuid.UUID], data: dict) -> ProjectMember | None:
+        item = await ProjectMember.get_by_id(self.session, item_id)
         if item is None:
             return None
-        return await self._db_update(item, data)
+        item.update(**data)
+        return await item.save(self.session)
 
-    async def delete(self, project_id: uuid.UUID, user_id: uuid.UUID) -> None:
-        item = await self.get(project_id, user_id)
+    async def delete(self, item_id: tuple[uuid.UUID, uuid.UUID]) -> None:
+        item = await ProjectMember.get_by_id(self.session, item_id)
         if item is not None:
-            await self._db_delete(item)
+            await item.delete(self.session)
 
-    async def list_by_project(self, project_id: uuid.UUID) -> list[models.ProjectMember]:
-        return await self._db_list_by(models.ProjectMember, project_id=project_id)
-
-    async def list_by_user(self, user_id: uuid.UUID) -> list[models.ProjectMember]:
-        return await self._db_list_by(models.ProjectMember, user_id=user_id)
+    async def get_all(self) -> list[ProjectMember]:
+        return await ProjectMember.get_all(self.session)
