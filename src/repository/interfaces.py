@@ -1,7 +1,7 @@
-from typing import Protocol, TypeVar, Generic, Tuple
 import uuid
+from typing import Generic, Protocol, Tuple, TypeVar
 
-from src.core.db import models, Base
+from src.core.db import Base, models
 
 T = TypeVar("T", bound=Base)
 

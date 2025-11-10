@@ -1,7 +1,9 @@
 import uuid
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import Project
+
 from ..interfaces import BaseRepository
 
 

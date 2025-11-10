@@ -1,7 +1,9 @@
 import uuid
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import ProjectMember
+
 from ..interfaces import BaseRepository
 
 
@@ -16,7 +18,9 @@ class ProjectMemberRepositoryImpl(BaseRepository[ProjectMember]):
         item = ProjectMember.from_dict(data)
         return await item.save(self.session)
 
-    async def update(self, item_id: tuple[uuid.UUID, uuid.UUID], data: dict) -> ProjectMember | None:
+    async def update(
+        self, item_id: tuple[uuid.UUID, uuid.UUID], data: dict
+    ) -> ProjectMember | None:
         item = await ProjectMember.get_by_id(self.session, item_id)
         if item is None:
             return None
