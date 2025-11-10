@@ -2,6 +2,7 @@ from typing import Any, TypeVar
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy import select
 
 T = TypeVar("T", bound="Base")
 
@@ -57,3 +58,11 @@ class Base:
         Создает экземпляр модели на основе словаря.
         """
         return cls(**data)
+    
+    @classmethod
+    async def get_all(cls: type[T], session: AsyncSession) -> list[T]:
+        """
+        Асинхронно возвращает все записи таблицы.
+        """
+        result = await session.execute(select(cls))
+        return list(result.scalars().all())
