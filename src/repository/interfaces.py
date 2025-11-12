@@ -14,7 +14,7 @@ class BaseRepository(Protocol, Generic[T]):
     async def get_all(self) -> list[T]: ...
 
 
-class StoreProtocol(Protocol):
+class Store(Protocol):
     checklist_items: BaseRepository[models.ChecklistItem]
     checklists: BaseRepository[models.Checklist]
     comments: BaseRepository[models.Comment]
