@@ -1,13 +1,13 @@
 from typing import Any
 from uuid import UUID
 
-from src.repository import Store
+from src.repository import StoreImpl
 
 from ..interfaces import BaseService
 
 
 class TaskSequenceServiceImpl(BaseService[Any]):
-    def __init__(self, store: Store):
+    def __init__(self, store: StoreImpl):
         self.store = store
 
     async def get(self, item_id: UUID) -> Any | None:

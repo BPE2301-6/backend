@@ -1,13 +1,13 @@
 from typing import Any, Tuple
 from uuid import UUID
 
-from src.repository import Store
+from src.repository import StoreImpl
 
 from ..interfaces import BaseService
 
 
 class ProjectMemberServiceImpl(BaseService[Any]):
-    def __init__(self, store: Store):
+    def __init__(self, store: StoreImpl):
         self.store = store
 
     async def get(self, item_id: Tuple[UUID, UUID]) -> Any | None:
