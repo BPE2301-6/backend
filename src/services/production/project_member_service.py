@@ -1,8 +1,9 @@
 from typing import Any, Tuple
 from uuid import UUID
 
-from ..interfaces import BaseService
 from src.repository import Store
+
+from ..interfaces import BaseService
 
 
 class ProjectMemberServiceImpl(BaseService[Any]):

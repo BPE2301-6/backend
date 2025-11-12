@@ -1,5 +1,5 @@
 import uuid
-from typing import Protocol, TypeVar, Tuple, Generic, Any
+from typing import Any, Generic, Protocol, Tuple, TypeVar
 
 T = TypeVar("T")
 

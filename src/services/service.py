@@ -1,4 +1,5 @@
 from src.repository.store import Store
+
 from .production import (
     ChecklistItemServiceImpl,
     ChecklistServiceImpl,
@@ -7,8 +8,8 @@ from .production import (
     ProjectServiceImpl,
     StatusServiceImpl,
     TagServiceImpl,
-    TaskServiceImpl,
     TaskSequenceServiceImpl,
+    TaskServiceImpl,
     TaskTagServiceImpl,
     UserServiceImpl,
 )
