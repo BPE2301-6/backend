@@ -11,7 +11,7 @@ permissions:
 
 env:
   IMAGE_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-backend
+  IMAGE_NAME: ${{ github.repository }}
   DOCKERFILE: ./Dockerfile
   CONTEXT: .
 
