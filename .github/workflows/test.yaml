@@ -49,6 +49,7 @@ jobs:
           set -o pipefail
           uv run pytest tests -vv -ra --maxfail=1 --durations=10 -s 2>&1 | tee pytest-logs.txt
           exit ${PIPESTATUS[0]}
+        shell: bash
 
       - name: upload pytest logs on failure
         if: failure()
