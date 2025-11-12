@@ -4,9 +4,18 @@ name: Lint & Format
 on:
   push:
     branches: [dev]
+    paths:
+      - "**/*.py"
+      - "pyproject.toml"
+      - "ruff.toml"
+      - ".ruff.toml"
 
 permissions:
   contents: write
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
@@ -21,23 +30,28 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip"
 
-      - name: Install Ruff
-        run: pip install ruff
+      - name: Upgrade pip & install Ruff
+        run: |
+          python -m pip install -U pip
+          pip install "ruff==0.6.8"
 
-      - name: Run Ruff Format
+      - name: Ruff Format
         run: ruff format .
 
-      - name: Fix import order with Ruff
-        id: fix
+      - name: Fix import order
+        run: ruff check --select I --fix .
+
+      - name: Detect changes after format
+        id: diff
         run: |
-          ruff check --select I --fix .
           if [[ -n "$(git status --porcelain)" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Commit formatted code
-        if: steps.fix.outputs.changed == 'true'
+        if: steps.diff.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
