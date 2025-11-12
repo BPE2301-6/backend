@@ -1,10 +1,15 @@
-name: Tests
+name: tests
 
 on:
   push:
-    branches: [dev, main]
+    branches: [ dev, main ]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "uv.lock"
   pull_request:
-    branches: [dev, main]
+    branches: [ dev, main ]
 
 permissions:
   contents: read
@@ -18,35 +23,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Python
+      - name: setup python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Set up uv
+      - name: setup uv
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
 
-      - name: Sync deps (dev + extras)
+      - name: sync deps (dev + extras)
         run: uv sync --dev --all-extras
 
-      - name: Run tests with coverage
+      - name: run tests (verbose log)
         env:
-          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "0"
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         run: |
-          uv run pytest -q --maxfail=1 --disable-warnings -p pytest_cov \
-            --cov=src --cov-report=xml:coverage.xml --cov-report=term
+          set -o pipefail
+          uv run pytest tests -vv -ra --maxfail=1 --durations=10 -s 2>&1 | tee pytest-logs.txt
+          exit ${PIPESTATUS[0]}
 
-      - name: Upload coverage.xml
-        if: always()
+      - name: upload pytest logs on failure
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
-          path: coverage.xml
+          name: pytest-logs
+          path: pytest-logs.txt
           if-no-files-found: ignore
