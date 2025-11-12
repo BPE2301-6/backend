@@ -10,20 +10,20 @@ class ProjectMemberServiceImpl(BaseService[Any]):
         self.store = store
 
     async def get(self, item_id: Tuple[UUID, UUID]) -> Any | None:
-        item = await self.store.project_members.get_by_id(item_id)
+        item = await self.store.project_member_repo().get_by_id(item_id)
         return item
 
     async def create(self, data: dict) -> Any:
-        item = await self.store.project_members.create(data)
+        item = await self.store.project_member_repo().create(data)
         return item
 
     async def update(self, item_id: Tuple[UUID, UUID], data: dict) -> Any:
-        item = await self.store.project_members.update(item_id, data)
+        item = await self.store.project_member_repo().update(item_id, data)
         return item
 
     async def delete(self, item_id: Tuple[UUID, UUID]) -> None:
-        await self.store.project_members.delete(item_id)
+        await self.store.project_member_repo().delete(item_id)
 
     async def get_all(self) -> list[Any]:
-        items = await self.store.project_members.get_all()
+        items = await self.store.project_member_repo().get_all()
         return items
