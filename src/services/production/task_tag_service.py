@@ -1,30 +1,29 @@
-from typing import Any, Tuple
 from uuid import UUID
 
-from src.repository import StoreImpl
+from src.repository import Store
 
 from ..interfaces import BaseService
 
 
-class TaskTagServiceImpl(BaseService[Any]):
-    def __init__(self, store: StoreImpl):
+class TaskTagServiceImpl(BaseService[...]):
+    def __init__(self, store: Store):
         self.store = store
 
-    async def get(self, item_id: Tuple[UUID, UUID]) -> Any | None:
+    async def get(self, item_id: tuple[UUID, UUID]) -> ... | None:
         item = await self.store.task_tag_repo().get_by_id(item_id)
         return item
 
-    async def create(self, data: dict) -> Any:
+    async def create(self, data: dict) -> ...:
         item = await self.store.task_tag_repo().create(data)
         return item
 
-    async def update(self, item_id: Tuple[UUID, UUID], data: dict) -> Any:
+    async def update(self, item_id: tuple[UUID, UUID], data: dict) -> ...:
         item = await self.store.task_tag_repo().update(item_id, data)
         return item
 
-    async def delete(self, item_id: Tuple[UUID, UUID]) -> None:
+    async def delete(self, item_id: tuple[UUID, UUID]) -> None:
         await self.store.task_tag_repo().delete(item_id)
 
-    async def get_all(self) -> list[Any]:
+    async def get_all(self) -> list[...]:
         items = await self.store.task_tag_repo().get_all()
         return items

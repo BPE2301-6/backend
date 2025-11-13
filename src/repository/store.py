@@ -1,3 +1,4 @@
+# noinspection DuplicatedCode
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .sql import (
@@ -14,20 +15,23 @@ from .sql import (
     UserRepositoryImpl,
 )
 
+from .interfaces import Store
 
-class Store:
+
+# noinspection DuplicatedCode
+class StoreImpl(Store):
     def __init__(self, session: AsyncSession):
-        self.checklist_items = ChecklistItemRepositoryImpl(session)
-        self.checklists = ChecklistRepositoryImpl(session)
-        self.comments = CommentRepositoryImpl(session)
-        self.project_members = ProjectMemberRepositoryImpl(session)
-        self.projects = ProjectRepositoryImpl(session)
-        self.statuses = StatusRepositoryImpl(session)
-        self.tags = TagRepositoryImpl(session)
-        self.tasks = TaskRepositoryImpl(session)
-        self.task_sequences = TaskSequenceRepositoryImpl(session)
-        self.task_tags = TaskTagRepositoryImpl(session)
-        self.users = UserRepositoryImpl(session)
+        self.checklist_items: ChecklistItemRepositoryImpl = ChecklistItemRepositoryImpl(session)
+        self.checklists: ChecklistRepositoryImpl = ChecklistRepositoryImpl(session)
+        self.comments: CommentRepositoryImpl = CommentRepositoryImpl(session)
+        self.project_members: ProjectMemberRepositoryImpl = ProjectMemberRepositoryImpl(session)
+        self.projects: ProjectRepositoryImpl = ProjectRepositoryImpl(session)
+        self.statuses: StatusRepositoryImpl = StatusRepositoryImpl(session)
+        self.tags: TagRepositoryImpl = TagRepositoryImpl(session)
+        self.tasks: TaskRepositoryImpl = TaskRepositoryImpl(session)
+        self.task_sequences: TaskSequenceRepositoryImpl = TaskSequenceRepositoryImpl(session)
+        self.task_tags: TaskTagRepositoryImpl = TaskTagRepositoryImpl(session)
+        self.users: UserRepositoryImpl = UserRepositoryImpl(session)
 
     def checklist_item_repo(self) -> ChecklistItemRepositoryImpl:
         return self.checklist_items
