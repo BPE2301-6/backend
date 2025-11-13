@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 
 from src.api.lifespan import lifespan
 from src.apps import api_router  # основной router
