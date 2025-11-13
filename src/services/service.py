@@ -1,5 +1,6 @@
 from src.repository.store import Store
 
+from .interfaces import Service
 from .production import (
     ChecklistItemServiceImpl,
     ChecklistServiceImpl,
@@ -13,7 +14,7 @@ from .production import (
     TaskTagServiceImpl,
     UserServiceImpl,
 )
-from .interfaces import Service
+
 
 # noinspection DuplicatedCode
 class ServiceImpl(Service):

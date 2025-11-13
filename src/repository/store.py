@@ -1,6 +1,7 @@
 # noinspection DuplicatedCode
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .interfaces import Store
 from .sql import (
     ChecklistItemRepositoryImpl,
     ChecklistRepositoryImpl,
@@ -14,8 +15,6 @@ from .sql import (
     TaskTagRepositoryImpl,
     UserRepositoryImpl,
 )
-
-from .interfaces import Store
 
 
 # noinspection DuplicatedCode

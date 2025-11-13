@@ -8,26 +8,12 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
+from src.config import cfg
+from src.core.db.base import Base
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(BASE_DIR / "src"))
 
-from src.config import cfg
-from src.core.db.base import Base
-from src.core.db.models import (
-    Checklist,
-    ChecklistItem,
-    Comment,
-    Project,
-    ProjectMember,
-    Status,
-    Tag,
-    Task,
-    TaskPriority,
-    TaskSequence,
-    TaskTag,
-    User,
-)
 
 config = context.config
 
