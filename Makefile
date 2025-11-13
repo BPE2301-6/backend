@@ -1,20 +1,21 @@
-.PHONY: format lint check
+.PHONY: format lint check fix
 
+# форматирование
 format:
-	@echo "🧹 Running isort & black to format code..."
-	isort .
-	black .
+	@echo "🧹 formatting with ruff..."
+	uv run --active ruff check . --fix
 
+# линтинг без исправлений
 lint:
-	@echo "🔍 Running ruff to lint code..."
-	ruff check .
+	@echo "🔍 linting with ruff..."
+	uv run --active ruff check .
 
+# проверка форматирования + линтинг
 check:
-	@echo "🧪 Checking formatting (ruff, isort, black)..."
-	ruff check .
-	isort --check-only .
-	black --check .
+	@echo "🧪 checking with ruff..."
+	uv run --active ruff check .
 
+# автофикс (если хочешь отдельно от format)
 fix:
-	@echo "🛠 Auto-fixing with ruff (if possible)..."
-	ruff check . --fix
+	@echo "🛠 auto-fixing with ruff..."
+	uv run --active ruff check . --fix

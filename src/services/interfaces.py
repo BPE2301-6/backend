@@ -1,12 +1,12 @@
 import uuid
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
+from typing import TypeVar
 
 T = TypeVar("T")
 
 
 # noinspection DuplicatedCode
-class BaseService(ABC, Generic[T]):
+class BaseService[T](ABC):
     @abstractmethod
     async def get(self, item_id: uuid.UUID | tuple[uuid.UUID, uuid.UUID]) -> T | None: ...
     @abstractmethod

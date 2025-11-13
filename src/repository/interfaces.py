@@ -1,6 +1,6 @@
 import uuid
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
+from typing import TypeVar
 
 from src.core.db import Base
 
@@ -8,7 +8,7 @@ T = TypeVar("T", bound=Base)
 
 
 # noinspection DuplicatedCode
-class BaseRepository(ABC, Generic[T]):
+class BaseRepository[T](ABC):
     @abstractmethod
     async def get_by_id(self, item_id: uuid.UUID | tuple[uuid.UUID, uuid.UUID]) -> T | None: ...
 
