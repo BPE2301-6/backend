@@ -1,20 +1,9 @@
-.PHONY: format lint check
-
-format:
-	@echo "🧹 Running isort & black to format code..."
-	isort .
-	black .
-
-lint:
-	@echo "🔍 Running ruff to lint code..."
-	ruff check .
+.PHONY: check fix
 
 check:
-	@echo "🧪 Checking formatting (ruff, isort, black)..."
-	ruff check .
-	isort --check-only .
-	black --check .
+	@echo "🧪 checking with ruff..."
+	uv run --active ruff check .
 
 fix:
-	@echo "🛠 Auto-fixing with ruff (if possible)..."
-	ruff check . --fix
+	@echo "🛠 auto-fixing with ruff..."
+	uv run --active ruff check . --fix

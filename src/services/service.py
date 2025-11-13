@@ -1,5 +1,6 @@
 from src.repository.store import Store
 
+from .interfaces import Service
 from .production import (
     ChecklistItemServiceImpl,
     ChecklistServiceImpl,
@@ -15,19 +16,20 @@ from .production import (
 )
 
 
-class ServiceImpl:
+# noinspection DuplicatedCode
+class ServiceImpl(Service):
     def __init__(self, store: Store):
-        self.checklist_items = ChecklistItemServiceImpl(store)
-        self.checklists = ChecklistServiceImpl(store)
-        self.comments = CommentServiceImpl(store)
-        self.project_members = ProjectMemberServiceImpl(store)
-        self.projects = ProjectServiceImpl(store)
-        self.statuses = StatusServiceImpl(store)
-        self.tags = TagServiceImpl(store)
-        self.tasks = TaskServiceImpl(store)
-        self.task_sequences = TaskSequenceServiceImpl(store)
-        self.task_tags = TaskTagServiceImpl(store)
-        self.users = UserServiceImpl(store)
+        self.checklist_items: ChecklistItemServiceImpl = ChecklistItemServiceImpl(store)
+        self.checklists: ChecklistServiceImpl = ChecklistServiceImpl(store)
+        self.comments: CommentServiceImpl = CommentServiceImpl(store)
+        self.project_members: ProjectMemberServiceImpl = ProjectMemberServiceImpl(store)
+        self.projects: ProjectServiceImpl = ProjectServiceImpl(store)
+        self.statuses: StatusServiceImpl = StatusServiceImpl(store)
+        self.tags: TagServiceImpl = TagServiceImpl(store)
+        self.tasks: TaskServiceImpl = TaskServiceImpl(store)
+        self.task_sequences: TaskSequenceServiceImpl = TaskSequenceServiceImpl(store)
+        self.task_tags: TaskTagServiceImpl = TaskTagServiceImpl(store)
+        self.users: UserServiceImpl = UserServiceImpl(store)
 
     def checklist_item_service(self) -> ChecklistItemServiceImpl:
         return self.checklist_items
