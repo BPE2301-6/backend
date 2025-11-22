@@ -8,10 +8,6 @@ from src.core.dependencies import get_service_manager
 router = APIRouter(prefix="/comments")
 
 
-@router.get(path="/ping", summary="Ping", status_code=status.HTTP_200_OK)
-def ping():
-    return {"message": "pong"}
-
 @router.delete(
     path="/{comment_id}",
     status_code=status.HTTP_204_NO_CONTENT,
