@@ -10,7 +10,7 @@ router = APIRouter(prefix="/tags")
 @router.patch(
     "/{tag_id}",
     summary="Обновить тег",
-    description="Обновляет имя и цвет тега.",
+    description="Обновляет свойства тега по указанному идентификатору. Возвращает обновлённые данные.",
 )
 async def update_tag(
     tag_id: UUID,
@@ -24,7 +24,7 @@ async def update_tag(
     "/{tag_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Удалить тег",
-    description="Удаляет тег и снимает связи с задачами.",
+    description="Удаляет тег по указанному идентификатору. При успешном выполнении возвращает статус 204.",
 )
 async def delete_tag(
     tag_id: UUID,
