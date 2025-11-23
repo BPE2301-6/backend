@@ -10,7 +10,7 @@ router = APIRouter(prefix="/tags")
 @router.patch(
     "/{tag_id}",
     summary="Обновить тег",
-    description="Обновляет свойства тега по указанному идентификатору. Возвращает обновлённый объект.",
+    description="Обновляет данные тега по указанному идентификатору. Возвращает обновлённый объект.",
 )
 async def update_tag(
     tag_id: UUID,
