@@ -14,8 +14,14 @@ if TYPE_CHECKING:
 
 
 class Checklist(Base):
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text("gen_random_uuid()"))
-    task_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("task.id", ondelete="CASCADE"), nullable=False, unique=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    task_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("task.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
 
     task: Mapped[Task] = relationship(back_populates="checklist", uselist=False)
-    items: Mapped[list[ChecklistItem]] = relationship(back_populates="checklist", passive_deletes=True)
+    items: Mapped[list[ChecklistItem]] = relationship(
+        back_populates="checklist", passive_deletes=True
+    )

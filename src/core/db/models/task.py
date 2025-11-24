@@ -15,7 +15,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     func,
-    text
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -37,13 +37,19 @@ class TaskPriority(enum.Enum):
 
 
 class Task(Base):
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text("gen_random_uuid()"))
-    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(
+        primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
     seq: Mapped[int] = mapped_column(Integer, nullable=False)
     key: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
     title: Mapped[str] = mapped_column(String(512), nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
-    status_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("status.id", ondelete="RESTRICT"), nullable=False)
+    status_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("status.id", ondelete="RESTRICT"), nullable=False
+    )
     priority: Mapped[TaskPriority] = mapped_column(
         Enum(TaskPriority), nullable=False, server_default="MEDIUM"
     )
@@ -67,6 +73,8 @@ class Task(Base):
     )
     tags: Mapped[list[TaskTag]] = relationship(back_populates="task", passive_deletes=True)
     comments: Mapped[list[Comment]] = relationship(back_populates="task", passive_deletes=True)
-    checklist: Mapped[Checklist | None] = relationship(back_populates="task", uselist=False, passive_deletes=True)
+    checklist: Mapped[Checklist | None] = relationship(
+        back_populates="task", uselist=False, passive_deletes=True
+    )
 
     __table_args__ = (UniqueConstraint("project_id", "seq"),)

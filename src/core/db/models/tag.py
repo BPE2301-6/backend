@@ -14,8 +14,12 @@ if TYPE_CHECKING:
 
 
 class Tag(Base):
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text("gen_random_uuid()"))
-    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(
+        primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
     name: Mapped[str] = mapped_column(String(64), nullable=False)
     color: Mapped[str | None] = mapped_column(String(7))
 

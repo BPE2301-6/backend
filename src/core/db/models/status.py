@@ -15,8 +15,12 @@ if TYPE_CHECKING:
 
 
 class Status(Base):
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text("gen_random_uuid()"))
-    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(
+        primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
     name: Mapped[str] = mapped_column(String(64), nullable=False)
     position: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     is_closed: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")

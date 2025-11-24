@@ -14,8 +14,12 @@ if TYPE_CHECKING:
 
 
 class ChecklistItem(Base):
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text("gen_random_uuid()"))
-    checklist_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("checklist.id", ondelete="CASCADE"), nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(
+        primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    checklist_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("checklist.id", ondelete="CASCADE"), nullable=False
+    )
     content: Mapped[str] = mapped_column(String(512), nullable=False)
     is_done: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
     position: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")

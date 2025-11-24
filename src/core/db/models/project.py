@@ -19,7 +19,9 @@ if TYPE_CHECKING:
 
 
 class Project(Base):
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text("gen_random_uuid()"))
+    id: Mapped[uuid.UUID] = mapped_column(
+        primary_key=True, server_default=text("gen_random_uuid()")
+    )
     key: Mapped[str] = mapped_column(String(10), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
@@ -32,8 +34,12 @@ class Project(Base):
     )
 
     lead: Mapped[User] = relationship(back_populates="led_projects")
-    members: Mapped[list[ProjectMember]] = relationship(back_populates="project", passive_deletes=True)
+    members: Mapped[list[ProjectMember]] = relationship(
+        back_populates="project", passive_deletes=True
+    )
     tasks: Mapped[list[Task]] = relationship(back_populates="project", passive_deletes=True)
     statuses: Mapped[list[Status]] = relationship(back_populates="project", passive_deletes=True)
     tags: Mapped[list[Tag]] = relationship(back_populates="project", passive_deletes=True)
-    task_sequence: Mapped[TaskSequence] = relationship(back_populates="project", uselist=False, passive_deletes=True)
+    task_sequence: Mapped[TaskSequence] = relationship(
+        back_populates="project", uselist=False, passive_deletes=True
+    )

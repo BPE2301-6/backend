@@ -14,8 +14,12 @@ if TYPE_CHECKING:
 
 
 class TaskTag(Base):
-    task_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("task.id", ondelete="CASCADE"), primary_key=True)
-    tag_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tag.id", ondelete="CASCADE"), primary_key=True)
+    task_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("task.id", ondelete="CASCADE"), primary_key=True
+    )
+    tag_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("tag.id", ondelete="CASCADE"), primary_key=True
+    )
 
     task: Mapped[Task] = relationship(back_populates="tags")
     tag: Mapped[Tag] = relationship(back_populates="tasks")
