@@ -28,3 +28,6 @@ class ProjectMemberServiceImpl(BaseService[...]):
     async def get_all(self) -> list[...]:
         items = await self.store.project_member_repo().get_all()
         return items
+    
+    async def get_all_by_project(self, project_id: UUID) -> ...:
+        return None
