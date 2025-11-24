@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Index, Text, func
+from sqlalchemy import DateTime, ForeignKey, Index, Text, func, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
@@ -15,8 +15,12 @@ if TYPE_CHECKING:
 
 
 class Comment(Base):
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
-    task_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("task.id"), nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(
+        primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    task_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("task.id", ondelete="CASCADE"), nullable=False
+    )
     author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("usr.id"), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(

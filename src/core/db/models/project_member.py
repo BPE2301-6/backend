@@ -21,7 +21,9 @@ class ProjectRole(enum.Enum):
 
 
 class ProjectMember(Base):
-    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("project.id"), primary_key=True)
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("project.id", ondelete="CASCADE"), primary_key=True
+    )
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("usr.id"), primary_key=True)
     role: Mapped[ProjectRole] = mapped_column(
         Enum(ProjectRole), nullable=False, server_default="MEMBER"
