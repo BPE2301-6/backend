@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class TaskSequence(Base):
-    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("project.id"), primary_key=True)
+    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("project.id", ondelete="CASCADE"), primary_key=True)
     next_seq: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
 
     project: Mapped[Project] = relationship(back_populates="task_sequence", uselist=False)
