@@ -1,3 +1,4 @@
+from .auth_service import AuthServiceImpl
 from .checklist_item_service import ChecklistItemServiceImpl
 from .checklist_service import ChecklistServiceImpl
 from .comment_service import CommentServiceImpl
@@ -11,6 +12,7 @@ from .task_tag_service import TaskTagServiceImpl
 from .user_service import UserServiceImpl
 
 __all__ = [
+    "AuthServiceImpl",
     "ChecklistItemServiceImpl",
     "ChecklistServiceImpl",
     "CommentServiceImpl",

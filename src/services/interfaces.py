@@ -20,6 +20,7 @@ class BaseService[T](ABC):
 
 
 class Service(ABC):
+    auth: BaseService[...]
     checklist_items: BaseService[...]
     checklists: BaseService[...]
     comments: BaseService[...]
@@ -32,6 +33,8 @@ class Service(ABC):
     task_tags: BaseService[...]
     users: BaseService[...]
 
+    @abstractmethod
+    def auth_service(self) -> BaseService[...]: ...
     @abstractmethod
     def checklist_item_service(self) -> BaseService[...]: ...
     @abstractmethod

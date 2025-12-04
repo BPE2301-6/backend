@@ -2,6 +2,7 @@ from src.repository.store import Store
 
 from .interfaces import Service
 from .production import (
+    AuthServiceImpl,
     ChecklistItemServiceImpl,
     ChecklistServiceImpl,
     CommentServiceImpl,
@@ -19,6 +20,8 @@ from .production import (
 # noinspection DuplicatedCode
 class ServiceImpl(Service):
     def __init__(self, store: Store):
+        self.auth: AuthServiceImpl = AuthServiceImpl(store)
+        self.users: UserServiceImpl = UserServiceImpl(store)
         self.checklist_items: ChecklistItemServiceImpl = ChecklistItemServiceImpl(store)
         self.checklists: ChecklistServiceImpl = ChecklistServiceImpl(store)
         self.comments: CommentServiceImpl = CommentServiceImpl(store)
@@ -30,6 +33,9 @@ class ServiceImpl(Service):
         self.task_sequences: TaskSequenceServiceImpl = TaskSequenceServiceImpl(store)
         self.task_tags: TaskTagServiceImpl = TaskTagServiceImpl(store)
         self.users: UserServiceImpl = UserServiceImpl(store)
+    
+    def auth_service(self) -> AuthServiceImpl:
+        return self.auth
 
     def checklist_item_service(self) -> ChecklistItemServiceImpl:
         return self.checklist_items
