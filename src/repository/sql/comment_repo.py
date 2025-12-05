@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func
 
 from src.core.db.models import Comment
 
@@ -32,3 +33,22 @@ class CommentRepositoryImpl(BaseRepository[Comment]):
 
     async def get_all(self) -> list[Comment]:
         return await Comment.get_all(self.session)
+
+    async def get_all_by_task(
+        self, task_id: uuid.UUID, limit: int, offset: int
+    ) -> tuple[list[Comment], int]:
+        stmt = (
+            select(Comment)
+            .where(Comment.task_id == task_id)
+            .order_by(Comment.created_at.asc())
+            .offset(offset)
+            .limit(limit)
+        )
+        result = await self.session.execute(stmt)
+        items = result.scalars().all()
+
+        count_stmt = select(func.count()).where(Comment.task_id == task_id)
+        total_result = await self.session.execute(count_stmt)
+        total = total_result.scalar_one()
+
+        return items, total

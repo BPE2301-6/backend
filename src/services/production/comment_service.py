@@ -32,4 +32,5 @@ class CommentServiceImpl(BaseService[...]):
     async def get_all_by_task(
         self, task_id: UUID, limit: int, offset: int
     ) -> tuple[list[dict], int]:
-        return [], 0
+        items, total = await self.store.comment_repo().get_all_by_task(task_id, limit, offset)
+        return items, total

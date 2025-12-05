@@ -34,7 +34,7 @@ class ChecklistRepositoryImpl(BaseRepository[Checklist]):
     async def get_all(self) -> list[Checklist]:
         return await Checklist.get_all(self.session)
     
-    async def get_by_task_id(self, task_id: uuid.UUID) -> list[Checklist]:
-        item = select(Checklist).where(Checklist.task_id == task_id)
-        result = await self.session.execute(item)
+    async def get_by_task_id(self, task_id: uuid.UUID) -> Checklist | None:
+        stmt = select(Checklist).where(Checklist.task_id == task_id)
+        result = await self.session.execute(stmt)
         return result.scalars().first()
