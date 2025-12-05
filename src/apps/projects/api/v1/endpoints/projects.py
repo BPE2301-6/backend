@@ -217,7 +217,7 @@ async def list_project_tags(
     offset: int = Query(0, ge=0),
     service_manager=Depends(get_service_manager),
 ):
-    items, total = await service_manager.tag_service().get_all_by_project(project_id)
+    items, total = await service_manager.tag_service().get_all_by_project(project_id, limit, offset)
     return {"items": items, "total": total, "limit": limit, "offset": offset}
 
 

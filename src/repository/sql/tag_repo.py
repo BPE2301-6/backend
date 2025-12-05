@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func
 
 from src.core.db.models import Tag
 
@@ -32,3 +33,16 @@ class TagRepositoryImpl(BaseRepository[Tag]):
 
     async def get_all(self) -> list[Tag]:
         return await Tag.get_all(self.session)
+
+    async def get_all_by_project(
+        self, project_id: uuid.UUID, limit: int, offset: int
+    ) -> tuple[list[Tag], int]:
+        stmt = select(Tag).where(Tag.project_id == project_id).offset(offset).limit(limit)
+        result = await self.session.execute(stmt)
+        items = result.scalars().all()
+
+        count_stmt = select(func.count()).select_from(Tag).where(Tag.project_id == project_id)
+        total_result = await self.session.execute(count_stmt)
+        total = total_result.scalar_one()
+
+        return items, total
