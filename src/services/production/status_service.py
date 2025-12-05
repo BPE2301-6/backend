@@ -29,5 +29,6 @@ class StatusServiceImpl(BaseService[...]):
         items = await self.store.status_repo().get_all()
         return items
 
-    async def get_all_by_project(self, project_id: UUID) -> ...:
-        return None
+    async def get_all_by_project(self, project_id: UUID) -> list[...]:
+        items = await self.store.status_repo().get_all_by_project(project_id)
+        return items
