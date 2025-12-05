@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from src.core.db.models import ProjectMember
 
@@ -34,3 +35,8 @@ class ProjectMemberRepositoryImpl(BaseRepository[ProjectMember]):
 
     async def get_all(self) -> list[ProjectMember]:
         return await ProjectMember.get_all(self.session)
+    
+    async def get_all_by_project(self, project_id: uuid.UUID) -> list[ProjectMember]:
+        stmt = select(ProjectMember).where(ProjectMember.project_id == project_id)
+        result = await self.session.execute(stmt)
+        return result.scalars().all()
