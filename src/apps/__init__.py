@@ -10,7 +10,7 @@ from .projects import projects_router_v1
 from .search import search_router_v1
 from .statuses import statuses_router_v1
 from .tags import tags_router_v1
-from .tasks import tasks_router_v1 
+from .tasks import tasks_router_v1
 from .users import users_router_v1
 
 routers: dict[str, APIRouter] = {

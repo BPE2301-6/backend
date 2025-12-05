@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
-from starlette import status
 from uuid import UUID
 
-from src.services import Service
+from fastapi import APIRouter, Depends
+from starlette import status
+
 from src.core.dependencies import get_service_manager
+from src.services import Service
 
 router = APIRouter(prefix="/checklists")
 
@@ -14,10 +15,7 @@ router = APIRouter(prefix="/checklists")
     description="Возвращает чеклист по идентификатору задачи. При отсутствии чеклиста возвращает пустой список.",
     status_code=status.HTTP_200_OK,
 )
-async def get_checklists(
-    task_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
-):
+async def get_checklists(task_id: UUID, service_manager: Service = Depends(get_service_manager)):
     checklist = await service_manager.checklist_service().get_by_task_id(task_id)
     return [checklist] if checklist else []
 
@@ -28,10 +26,7 @@ async def get_checklists(
     description="Создаёт новый чеклист по идентификатору задачи. Возвращает созданный объект.",
     status_code=status.HTTP_201_CREATED,
 )
-async def create_checklist(
-    task_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
-):
+async def create_checklist(task_id: UUID, service_manager: Service = Depends(get_service_manager)):
     data = {"task_id": task_id}
     return await service_manager.checklist_service().create(data)
 
@@ -43,7 +38,6 @@ async def create_checklist(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_checklist(
-    checklist_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    checklist_id: UUID, service_manager: Service = Depends(get_service_manager)
 ):
     await service_manager.checklist_service().delete(checklist_id)

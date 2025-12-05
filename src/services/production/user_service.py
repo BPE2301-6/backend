@@ -1,5 +1,5 @@
-from uuid import UUID
 from typing import Optional
+from uuid import UUID
 
 from src.repository import Store
 
@@ -28,6 +28,6 @@ class UserServiceImpl(BaseService[...]):
     async def get_all(self) -> list[...]:
         items = await self.store.user_repo().get_all()
         return items
-    
+
     async def get_list(self, search: str, limit: int, offset: int) -> tuple[list[dict], int]:
         return [], 0

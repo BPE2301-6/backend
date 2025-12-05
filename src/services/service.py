@@ -33,7 +33,7 @@ class ServiceImpl(Service):
         self.task_sequences: TaskSequenceServiceImpl = TaskSequenceServiceImpl(store)
         self.task_tags: TaskTagServiceImpl = TaskTagServiceImpl(store)
         self.users: UserServiceImpl = UserServiceImpl(store)
-    
+
     def auth_service(self) -> AuthServiceImpl:
         return self.auth
 

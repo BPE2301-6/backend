@@ -1,5 +1,5 @@
-from uuid import UUID
 from typing import Optional
+from uuid import UUID
 
 from src.repository import Store
 
@@ -28,13 +28,8 @@ class TaskServiceImpl(BaseService[...]):
     async def get_all(self) -> list[...]:
         items = await self.store.task_repo().get_all()
         return items
-    
+
     async def get_all_by_project(
-        self,
-        project_id: UUID,
-        filters: dict,
-        limit: int,
-        offset: int,
-        sort: str
+        self, project_id: UUID, filters: dict, limit: int, offset: int, sort: str
     ) -> tuple[list[dict], int]:
         return [], 0

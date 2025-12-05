@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from fastapi import APIRouter, Depends, Query, status
 
 from src.core.dependencies import get_service_manager
@@ -10,14 +11,9 @@ router = APIRouter(prefix="/projects")
     path="",
     status_code=status.HTTP_201_CREATED,
     summary="Создать проект",
-    description=(
-        "Создаёт новый проект. Возвращает созданный объект."
-    ),
+    description=("Создаёт новый проект. Возвращает созданный объект."),
 )
-async def create_project(
-    data: dict,
-    service_manager=Depends(get_service_manager),
-):
+async def create_project(data: dict, service_manager=Depends(get_service_manager)):
     return await service_manager.project_service().create(data)
 
 
@@ -25,8 +21,7 @@ async def create_project(
     path="",
     summary="Получить список проектов",
     description=(
-        "Возвращает список проектов. Поддерживает поиск "
-        "по имени и ключу, а также пагинацию."
+        "Возвращает список проектов. Поддерживает поиск " "по имени и ключу, а также пагинацию."
     ),
 )
 async def list_projects(
@@ -36,9 +31,7 @@ async def list_projects(
     service_manager=Depends(get_service_manager),
 ):
     return await service_manager.project_service().get_list(
-        search=search,
-        limit=limit,
-        offset=offset,
+        search=search, limit=limit, offset=offset
     )
 
 
@@ -47,10 +40,7 @@ async def list_projects(
     summary="Получить проект",
     description="Возвращает данные проекта по указанному идентификатору.",
 )
-async def get_project(
-    project_id: UUID,
-    service_manager=Depends(get_service_manager),
-):
+async def get_project(project_id: UUID, service_manager=Depends(get_service_manager)):
     return await service_manager.project_service().get(project_id)
 
 
@@ -58,14 +48,11 @@ async def get_project(
     path="/{project_id}",
     summary="Обновить проект",
     description=(
-        "Обновляет данные проекта по указанному идентификатору. "
-        "Возвращает обновлённый объект."
+        "Обновляет данные проекта по указанному идентификатору. " "Возвращает обновлённый объект."
     ),
 )
 async def update_project(
-    project_id: UUID,
-    data: dict,
-    service_manager=Depends(get_service_manager),
+    project_id: UUID, data: dict, service_manager=Depends(get_service_manager)
 ):
     return await service_manager.project_service().update(project_id, data)
 
@@ -79,10 +66,7 @@ async def update_project(
         "При успешном выполнении возвращает статус 204."
     ),
 )
-async def delete_project(
-    project_id: UUID,
-    service_manager=Depends(get_service_manager),
-):
+async def delete_project(project_id: UUID, service_manager=Depends(get_service_manager)):
     await service_manager.project_service().delete(project_id)
 
 
@@ -92,10 +76,7 @@ async def delete_project(
     description="Возвращает список участников проекта.",
     status_code=status.HTTP_200_OK,
 )
-async def get_project_members(
-    project_id: UUID,
-    service_manager=Depends(get_service_manager),
-):
+async def get_project_members(project_id: UUID, service_manager=Depends(get_service_manager)):
     return await service_manager.project_member_service().get_all_by_project(project_id)
 
 
@@ -106,9 +87,7 @@ async def get_project_members(
     status_code=status.HTTP_201_CREATED,
 )
 async def add_project_member(
-    project_id: UUID,
-    data: dict,
-    service_manager=Depends(get_service_manager),
+    project_id: UUID, data: dict, service_manager=Depends(get_service_manager)
 ):
     data["project_id"] = project_id
     return await service_manager.project_member_service().create(data)
@@ -124,10 +103,7 @@ async def add_project_member(
     status_code=status.HTTP_200_OK,
 )
 async def update_project_member(
-    project_id: UUID,
-    user_id: UUID,
-    data: dict,
-    service_manager=Depends(get_service_manager),
+    project_id: UUID, user_id: UUID, data: dict, service_manager=Depends(get_service_manager)
 ):
     # TODO: Проверить, что хотя бы один OWNER остаётся
     item_id: tuple[UUID, UUID] = (project_id, user_id)
@@ -144,9 +120,7 @@ async def update_project_member(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_project_member(
-    project_id: UUID,
-    user_id: UUID,
-    service_manager=Depends(get_service_manager),
+    project_id: UUID, user_id: UUID, service_manager=Depends(get_service_manager)
 ):
     # TODO: Проверить, что хотя бы один OWNER остаётся
     item_id: tuple[UUID, UUID] = (project_id, user_id)
@@ -159,10 +133,7 @@ async def delete_project_member(
     description="Возвращает список статусов проекта.",
     status_code=status.HTTP_200_OK,
 )
-async def get_project_statuses(
-    project_id: UUID,
-    service_manager=Depends(get_service_manager),
-):
+async def get_project_statuses(project_id: UUID, service_manager=Depends(get_service_manager)):
     return await service_manager.status_service().get_all_by_project(project_id)
 
 
@@ -173,9 +144,7 @@ async def get_project_statuses(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_project_status(
-    project_id: UUID,
-    data: dict,
-    service_manager=Depends(get_service_manager),
+    project_id: UUID, data: dict, service_manager=Depends(get_service_manager)
 ):
     data["project_id"] = project_id
     return await service_manager.status_service().create(data)
@@ -188,9 +157,7 @@ async def create_project_status(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_project_task(
-    project_id: UUID,
-    data: dict,
-    service_manager=Depends(get_service_manager),
+    project_id: UUID, data: dict, service_manager=Depends(get_service_manager)
 ):
     data["project_id"] = project_id
     return await service_manager.task_service().create(data)
@@ -217,26 +184,25 @@ async def list_project_tasks(
     sort: str = Query("-created_at"),
     service_manager=Depends(get_service_manager),
 ):
-    filters = {k: v for k, v in {
-        "status_id": status_id,
-        "assignee_id": assignee_id,
-        "reporter_id": reporter_id,
-        "priority": priority,
-        "tag_id": tag_id,
-        "q": q,
-        "due_from": due_from,
-        "due_to": due_to,
-    }.items() if v is not None}
+    filters = {
+        k: v
+        for k, v in {
+            "status_id": status_id,
+            "assignee_id": assignee_id,
+            "reporter_id": reporter_id,
+            "priority": priority,
+            "tag_id": tag_id,
+            "q": q,
+            "due_from": due_from,
+            "due_to": due_to,
+        }.items()
+        if v is not None
+    }
 
     items, total = await service_manager.task_service().get_all_by_project(
         project_id, filters, limit, offset, sort
     )
-    return {
-        "items": items,
-        "total": total,
-        "limit": limit,
-        "offset": offset,
-    }
+    return {"items": items, "total": total, "limit": limit, "offset": offset}
 
 
 @router.get(
@@ -252,12 +218,7 @@ async def list_project_tags(
     service_manager=Depends(get_service_manager),
 ):
     items, total = await service_manager.tag_service().get_all_by_project(project_id)
-    return {
-        "items": items,
-        "total": total,
-        "limit": limit,
-        "offset": offset,
-    }
+    return {"items": items, "total": total, "limit": limit, "offset": offset}
 
 
 @router.post(
@@ -267,9 +228,7 @@ async def list_project_tags(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_project_tag(
-    project_id: UUID,
-    data: dict,
-    service_manager=Depends(get_service_manager),
+    project_id: UUID, data: dict, service_manager=Depends(get_service_manager)
 ):
     data["project_id"] = project_id
     return await service_manager.tag_service().create(data)

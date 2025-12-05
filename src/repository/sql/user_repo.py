@@ -33,7 +33,7 @@ class UserRepositoryImpl(BaseRepository[User]):
 
     async def get_all(self) -> list[User]:
         return await User.get_all(self.session)
-    
+
     async def get_by_email(self, email: str) -> User | None:
         stmt = select(User).where(User.email == email)
         result = await self.session.execute(stmt)

@@ -4,11 +4,12 @@ from starlette import status
 router = APIRouter(prefix="/auth")
 
 
-from fastapi import APIRouter, Depends, status
 from uuid import UUID
 
-from src.services import Service
+from fastapi import APIRouter, Depends, status
+
 from src.core.dependencies import get_service_manager
+from src.services import Service
 
 router = APIRouter(prefix="/auth")
 
@@ -19,10 +20,7 @@ router = APIRouter(prefix="/auth")
     summary="Зарегистрировать пользователя",
     description="Регистрирует нового пользователя. Возвращает созданный объект.",
 )
-async def register_user(
-    data: dict,
-    service_manager: Service = Depends(get_service_manager),
-):
+async def register_user(data: dict, service_manager: Service = Depends(get_service_manager)):
     return await service_manager.auth_service().register(data)
 
 
@@ -31,8 +29,5 @@ async def register_user(
     summary="Авторизовать пользователя",
     description="Авторизует пользователя по указанным данным. Возвращает токены доступа.",
 )
-async def login_user(
-    data: dict,
-    service_manager: Service = Depends(get_service_manager),
-):
+async def login_user(data: dict, service_manager: Service = Depends(get_service_manager)):
     return await service_manager.auth_service().login(data["email"], data["password"])
