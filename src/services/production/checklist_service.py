@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Optional
 
 from src.repository import Store
 
@@ -9,7 +10,7 @@ class ChecklistServiceImpl(BaseService[...]):
     def __init__(self, store: Store):
         self.store = store
 
-    async def get(self, item_id: UUID) -> ... | None:
+    async def get(self, item_id: UUID) -> Optional[...]:
         item = await self.store.checklist_repo().get_by_id(item_id)
         return item
 
@@ -27,3 +28,6 @@ class ChecklistServiceImpl(BaseService[...]):
     async def get_all(self) -> list[...]:
         items = await self.store.checklist_repo().get_all()
         return items
+    
+    async def get_by_task_id(self, task_id: UUID) -> ...:
+        return None

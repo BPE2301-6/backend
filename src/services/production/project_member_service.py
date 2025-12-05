@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Optional
 
 from src.repository import Store
 
@@ -9,7 +10,7 @@ class ProjectMemberServiceImpl(BaseService[...]):
     def __init__(self, store: Store):
         self.store = store
 
-    async def get(self, item_id: tuple[UUID, UUID]) -> ... | None:
+    async def get(self, item_id: tuple[UUID, UUID]) -> Optional[...]:
         item = await self.store.project_member_repo().get_by_id(item_id)
         return item
 
@@ -27,3 +28,6 @@ class ProjectMemberServiceImpl(BaseService[...]):
     async def get_all(self) -> list[...]:
         items = await self.store.project_member_repo().get_all()
         return items
+    
+    async def get_all_by_project(self, project_id: UUID) -> ...:
+        return None
