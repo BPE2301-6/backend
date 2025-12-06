@@ -30,4 +30,5 @@ class ChecklistServiceImpl(BaseService[...]):
         return items
 
     async def get_by_task_id(self, task_id: UUID) -> ...:
-        return None
+        item = await self.store.checklist_repo().get_by_task_id(task_id)
+        return item

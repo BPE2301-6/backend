@@ -29,5 +29,8 @@ class TagServiceImpl(BaseService[...]):
         items = await self.store.tag_repo().get_all()
         return items
 
-    async def get_all_by_project(self, project_id: UUID) -> tuple[list[dict], int]:
-        return [], 0
+    async def get_all_by_project(
+        self, project_id: UUID, limit: int, offset: int
+    ) -> tuple[list[...], int]:
+        items, total = await self.store.tag_repo().get_all_by_project(project_id, limit, offset)
+        return items, total

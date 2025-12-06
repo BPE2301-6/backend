@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from src.core.db.models import Status
 
@@ -32,3 +33,8 @@ class StatusRepositoryImpl(BaseRepository[Status]):
 
     async def get_all(self) -> list[Status]:
         return await Status.get_all(self.session)
+
+    async def get_all_by_project(self, project_id: uuid.UUID) -> list[Status]:
+        stmt = select(Status).where(Status.project_id == project_id).order_by(Status.position.asc())
+        result = await self.session.execute(stmt)
+        return result.scalars().all()

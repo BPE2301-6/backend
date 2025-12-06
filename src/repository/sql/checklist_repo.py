@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from src.core.db.models import Checklist
 
@@ -32,3 +33,8 @@ class ChecklistRepositoryImpl(BaseRepository[Checklist]):
 
     async def get_all(self) -> list[Checklist]:
         return await Checklist.get_all(self.session)
+    
+    async def get_by_task_id(self, task_id: uuid.UUID) -> Checklist | None:
+        stmt = select(Checklist).where(Checklist.task_id == task_id)
+        result = await self.session.execute(stmt)
+        return result.scalars().first()

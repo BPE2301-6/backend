@@ -1,7 +1,7 @@
 import uuid
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func, or_
 
 from src.core.db.models import User
 
@@ -38,3 +38,22 @@ class UserRepositoryImpl(BaseRepository[User]):
         stmt = select(User).where(User.email == email)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+
+    async def get_list(self, search: str | None, limit: int, offset: int) -> tuple[list[User], int]:
+        stmt = select(User)
+
+        if search:
+            query = f"%{search}%"
+            stmt = stmt.where(or_(User.name.ilike(query), User.email.ilike(query)))
+
+        stmt = stmt.offset(offset).limit(limit)
+        result = await self.session.execute(stmt)
+        items = result.scalars().all()
+
+        count_stmt = select(func.count()).select_from(User)
+        if search:
+            count_stmt = count_stmt.where(or_(User.name.ilike(query), User.email.ilike(query)))
+        total_result = await self.session.execute(count_stmt)
+        total = total_result.scalar_one()
+
+        return items, total

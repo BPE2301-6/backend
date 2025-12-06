@@ -30,6 +30,14 @@ class TaskServiceImpl(BaseService[...]):
         return items
 
     async def get_all_by_project(
-        self, project_id: UUID, filters: dict, limit: int, offset: int, sort: str
-    ) -> tuple[list[dict], int]:
-        return [], 0
+        self,
+        project_id: UUID,
+        filters: dict,
+        limit: int,
+        offset: int,
+        sort: str
+    ) -> tuple[list[...], int]:
+        items, total = await self.store.task_repo().get_all_by_project(
+            project_id, filters, limit, offset, sort
+        )
+        return items, total
