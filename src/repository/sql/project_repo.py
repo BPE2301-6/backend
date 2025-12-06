@@ -1,7 +1,7 @@
 import uuid
 
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_, func
 
 from src.core.db.models import Project
 
@@ -39,20 +39,18 @@ class ProjectRepositoryImpl(BaseRepository[Project]):
     ) -> tuple[list[Project], int]:
         stmt = select(Project)
         if search:
-            stmt = stmt.where(or_(
-                Project.name.ilike(f"%{search}%"),
-                Project.key.ilike(f"%{search}%")
-            ))
+            stmt = stmt.where(
+                or_(Project.name.ilike(f"%{search}%"), Project.key.ilike(f"%{search}%"))
+            )
         stmt = stmt.offset(offset).limit(limit)
         result = await self.session.execute(stmt)
         items = result.scalars().all()
 
         count_stmt = select(func.count()).select_from(Project)
         if search:
-            count_stmt = count_stmt.where(or_(
-                Project.name.ilike(f"%{search}%"),
-                Project.key.ilike(f"%{search}%")
-            ))
+            count_stmt = count_stmt.where(
+                or_(Project.name.ilike(f"%{search}%"), Project.key.ilike(f"%{search}%"))
+            )
         total_result = await self.session.execute(count_stmt)
         total = total_result.scalar_one()
 

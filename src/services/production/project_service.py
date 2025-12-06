@@ -29,8 +29,6 @@ class ProjectServiceImpl(BaseService[...]):
         items = await self.store.project_repo().get_all()
         return items
 
-    async def get_list(
-        self, search: str | None, limit: int, offset: int
-    ) -> tuple[list[...], int]:
+    async def get_list(self, search: str | None, limit: int, offset: int) -> tuple[list[...], int]:
         items, total = await self.store.project_repo().get_list(search, limit, offset)
         return items, total
