@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import enum
 import uuid
 from datetime import date, datetime
 from typing import TYPE_CHECKING
@@ -19,6 +18,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from src.schemas.enums import TaskPriority
 from ..base import Base
 
 if TYPE_CHECKING:
@@ -28,12 +28,6 @@ if TYPE_CHECKING:
     from .status import Status
     from .task_tag import TaskTag
     from .user import User
-
-
-class TaskPriority(enum.Enum):
-    HIGH = "HIGH"
-    MEDIUM = "MEDIUM"
-    LOW = "LOW"
 
 
 class Task(Base):
