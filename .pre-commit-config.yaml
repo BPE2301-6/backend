@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.8
+    hooks:
+      # сначала форматирование
+      - id: ruff-format
+
+      # потом линтинг с автофиксами где возможно
+      - id: ruff
+        args: [--fix]
+
+  # по желанию можно добавить стандартные хуки
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
