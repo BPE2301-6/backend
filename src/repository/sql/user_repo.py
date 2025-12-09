@@ -1,9 +1,10 @@
 import uuid
-
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import User
+from src.schemas.dtos import UserDTO
+from src.core.utils import map_model
 
 from ..interfaces import BaseRepository
 
@@ -12,34 +13,43 @@ class UserRepositoryImpl(BaseRepository[User]):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_by_id(self, item_id: uuid.UUID) -> User | None:
-        return await User.get_by_id(self.session, item_id)
+    async def get_by_id(self, item_id: uuid.UUID) -> UserDTO | None:
+        item = await User.get_by_id(self.session, item_id)
+        if item is None:
+            return None
+        return map_model(item, UserDTO)
 
-    async def create(self, data: dict) -> User:
+    async def create(self, data: dict) -> UserDTO:
         item = User.from_dict(data)
-        return await item.save(self.session)
+        saved_item = await item.save(self.session)
+        return map_model(saved_item, UserDTO)
 
-    async def update(self, item_id: uuid.UUID, data: dict) -> User | None:
+    async def update(self, item_id: uuid.UUID, data: dict) -> UserDTO | None:
         item = await User.get_by_id(self.session, item_id)
         if item is None:
             return None
         item.update(**data)
-        return await item.save(self.session)
+        saved_item = await item.save(self.session)
+        return map_model(saved_item, UserDTO)
 
     async def delete(self, item_id: uuid.UUID) -> None:
         item = await User.get_by_id(self.session, item_id)
         if item is not None:
             await item.delete(self.session)
 
-    async def get_all(self) -> list[User]:
-        return await User.get_all(self.session)
+    async def get_all(self) -> list[UserDTO]:
+        items = await User.get_all(self.session)
+        return [map_model(i, UserDTO) for i in items]
 
-    async def get_by_email(self, email: str) -> User | None:
+    async def get_by_email(self, email: str) -> UserDTO | None:
         stmt = select(User).where(User.email == email)
         result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        item = result.scalar_one_or_none()
+        if item is None:
+            return None
+        return map_model(item, UserDTO)
 
-    async def get_list(self, search: str | None, limit: int, offset: int) -> tuple[list[User], int]:
+    async def get_list(self, search: str | None, limit: int, offset: int) -> tuple[list[UserDTO], int]:
         stmt = select(User)
 
         if search:
@@ -49,6 +59,7 @@ class UserRepositoryImpl(BaseRepository[User]):
         stmt = stmt.offset(offset).limit(limit)
         result = await self.session.execute(stmt)
         items = result.scalars().all()
+        dto_items = [map_model(i, UserDTO) for i in items]
 
         count_stmt = select(func.count()).select_from(User)
         if search:
@@ -56,4 +67,4 @@ class UserRepositoryImpl(BaseRepository[User]):
         total_result = await self.session.execute(count_stmt)
         total = total_result.scalar_one()
 
-        return items, total
+        return dto_items, total

@@ -3,6 +3,6 @@ from uuid import UUID
 
 
 @dataclass
-class TaskTagDTO:
-    task_id: UUID
-    tag_id: UUID
+class TaskSequenceDTO:
+    project_id: UUID
+    next_seq: int

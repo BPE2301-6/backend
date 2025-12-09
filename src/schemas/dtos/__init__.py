@@ -5,6 +5,7 @@ from .project_member import ProjectMemberDTO
 from .project import ProjectDTO
 from .status import StatusDTO
 from .tag import TagDTO
+from .task_sequence import TaskSequenceDTO
 from .task_tag import TaskTagDTO
 from .task import TaskDTO
 from .user import UserDTO
@@ -17,6 +18,7 @@ __all__ = [
     "ProjectDTO",
     "StatusDTO",
     "TagDTO",
+    "TaskSequenceDTO",
     "TaskTagDTO",
     "TaskDTO",
     "UserDTO",
