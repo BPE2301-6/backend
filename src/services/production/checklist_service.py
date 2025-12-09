@@ -1,34 +1,34 @@
-from typing import Optional
 from uuid import UUID
 
 from src.repository import Store
+from src.schemas.dtos import ChecklistDTO
 
 from ..interfaces import BaseService
 
 
-class ChecklistServiceImpl(BaseService[...]):
+class ChecklistServiceImpl(BaseService[ChecklistDTO]):
     def __init__(self, store: Store):
         self.store = store
 
-    async def get(self, item_id: UUID) -> Optional[...]:
+    async def get(self, item_id: UUID) -> ChecklistDTO | None:
         item = await self.store.checklist_repo().get_by_id(item_id)
         return item
 
-    async def create(self, data: dict) -> ...:
+    async def create(self, data: dict) -> ChecklistDTO:
         item = await self.store.checklist_repo().create(data)
         return item
 
-    async def update(self, item_id: UUID, data: dict) -> ...:
+    async def update(self, item_id: UUID, data: dict) -> ChecklistDTO:
         item = await self.store.checklist_repo().update(item_id, data)
         return item
 
     async def delete(self, item_id: UUID) -> None:
         await self.store.checklist_repo().delete(item_id)
 
-    async def get_all(self) -> list[...]:
+    async def get_all(self) -> list[ChecklistDTO]:
         items = await self.store.checklist_repo().get_all()
         return items
 
-    async def get_by_task_id(self, task_id: UUID) -> ...:
+    async def get_by_task_id(self, task_id: UUID) -> ChecklistDTO | None:
         item = await self.store.checklist_repo().get_by_task_id(task_id)
         return item

@@ -1,34 +1,34 @@
-from typing import Optional
 from uuid import UUID
 
 from src.repository import Store
+from src.schemas.dtos import ProjectDTO
 
 from ..interfaces import BaseService
 
 
-class ProjectServiceImpl(BaseService[...]):
+class ProjectServiceImpl(BaseService[ProjectDTO]):
     def __init__(self, store: Store):
         self.store = store
 
-    async def get(self, item_id: UUID) -> Optional[...]:
+    async def get(self, item_id: UUID) -> ProjectDTO | None:
         item = await self.store.project_repo().get_by_id(item_id)
         return item
 
-    async def create(self, data: dict) -> ...:
+    async def create(self, data: dict) -> ProjectDTO:
         item = await self.store.project_repo().create(data)
         return item
 
-    async def update(self, item_id: UUID, data: dict) -> ...:
+    async def update(self, item_id: UUID, data: dict) -> ProjectDTO:
         item = await self.store.project_repo().update(item_id, data)
         return item
 
     async def delete(self, item_id: UUID) -> None:
         await self.store.project_repo().delete(item_id)
 
-    async def get_all(self) -> list[...]:
+    async def get_all(self) -> list[ProjectDTO]:
         items = await self.store.project_repo().get_all()
         return items
 
-    async def get_list(self, search: str | None, limit: int, offset: int) -> tuple[list[...], int]:
+    async def get_list(self, search: str | None, limit: int, offset: int) -> tuple[list[ProjectDTO], int]:
         items, total = await self.store.project_repo().get_list(search, limit, offset)
         return items, total
