@@ -1,0 +1,96 @@
+name: Deploy Backend to Dev
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-backend-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Start
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            🚀 **Деплой backend на dev**
+            Репозиторий: `${{ github.repository }}`
+            Ветка: `${{ github.ref }}`
+            Автор: `${{ github.actor }}`
+            Коммит: `${{ github.event.head_commit.message }}`
+            🔗 [Коммит](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            📁 BACKEND_DIR: `${{ secrets.DEV_BACKEND_DIR }}`
+
+      - name: Install SSH key
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.DEV_SSH_PORT }} -H ${{ secrets.DEV_SSH_HOST }} > ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        run: |
+          ssh -A -p ${{ secrets.DEV_SSH_PORT }} ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_HOST }} << 'EOF'
+          set -e
+
+          cd "${{ secrets.DEV_BACKEND_DIR }}"
+          echo "pwd: $(pwd)"
+
+          echo "===> update backend repo (dev)"
+          git fetch origin
+          git checkout dev
+          git reset --hard origin/dev
+
+          if [ ! -f ".env.dev" ]; then
+            echo ".env.dev not found in $(pwd) — создай его на сервере"
+            exit 1
+          fi
+
+          export DOCKER_BUILDKIT=1
+
+          echo "===> docker compose up backend-dev"
+          docker compose -f docker-compose.dev.yaml --env-file .env.dev up -d --build
+
+          echo "===> docker compose ps"
+          docker compose -f docker-compose.dev.yaml ps || true
+
+          EOF
+
+      - name: Notify Success
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            ✅ **Backend dev деплоился успешно**
+            Репозиторий: `${{ github.repository }}`
+            Ветка: `${{ github.ref }}`
+            🔗 [Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            📁 BACKEND_DIR: `${{ secrets.DEV_BACKEND_DIR }}`
+
+      - name: Notify Failure
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            ❌ **Backend dev деплой упал**
+            Репозиторий: `${{ github.repository }}`
+            Ветка: `${{ github.ref }}`
+            Автор: `${{ github.actor }}`
+            🔗 [Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            📁 BACKEND_DIR: `${{ secrets.DEV_BACKEND_DIR }}`
+
+      - name: Cleanup
+        run: rm -rf ~/.ssh
