@@ -11,7 +11,10 @@ router = APIRouter(prefix="/checklist-items")
 @router.patch(
     "/{item_id}",
     summary="Обновить элемент чеклиста",
-    description="Обновляет данные элемента чеклиста по указанному идентификатору. Возвращает обновлённый объект.",
+    description=(
+        "Обновляет данные элемента чеклиста по указанному идентификатору. "
+        "Возвращает обновлённый объект."
+    ),
 )
 async def update_checklist_item(
     item_id: UUID, data: dict, service_manager: Service = Depends(get_service_manager)
@@ -22,7 +25,10 @@ async def update_checklist_item(
 @router.delete(
     "/{item_id}",
     summary="Удалить элемент чеклиста",
-    description="Удаляет элемент чеклиста по указанному идентификатору. При успешном выполнении возвращает статус 204.",
+    description=(
+        "Удаляет элемент чеклиста по указанному идентификатору. "
+        "При успешном выполнении возвращает статус 204."
+    ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_checklist_item(

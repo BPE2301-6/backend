@@ -16,7 +16,11 @@ app.add_middleware(MetricsMiddleware)
 app.include_router(api_router)
 
 app.add_middleware(
-    CORSMiddleware, allow_origins=cfg.docs.allowed_ips, allow_credentials=True, allow_methods=["*"]
+    CORSMiddleware,
+    allow_origins=cfg.docs.allowed_ips,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Опционально: Middleware, Exceptions

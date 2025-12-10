@@ -12,7 +12,10 @@ router = APIRouter(prefix="/checklists")
 @router.get(
     "/tasks/{task_id}/checklists",
     summary="Получить чеклист",
-    description="Возвращает чеклист по идентификатору задачи. При отсутствии чеклиста возвращает пустой список.",
+    description=(
+        "Возвращает чеклист по идентификатору задачи. "
+        "При отсутствии чеклиста возвращает пустой список."
+    ),
     status_code=status.HTTP_200_OK,
 )
 async def get_checklists(task_id: UUID, service_manager: Service = Depends(get_service_manager)):
@@ -23,7 +26,7 @@ async def get_checklists(task_id: UUID, service_manager: Service = Depends(get_s
 @router.post(
     "/tasks/{task_id}/checklists",
     summary="Создать чеклист",
-    description="Создаёт новый чеклист по идентификатору задачи. Возвращает созданный объект.",
+    description=("Создаёт новый чеклист по идентификатору задачи. " "Возвращает созданный объект."),
     status_code=status.HTTP_201_CREATED,
 )
 async def create_checklist(task_id: UUID, service_manager: Service = Depends(get_service_manager)):
@@ -34,7 +37,10 @@ async def create_checklist(task_id: UUID, service_manager: Service = Depends(get
 @router.delete(
     "/{checklist_id}",
     summary="Удалить чеклист",
-    description="Удаляет чеклист по указанному идентификатору. При успешном выполнении возвращает статус 204.",
+    description=(
+        "Удаляет чеклист по указанному идентификатору. "
+        "При успешном выполнении возвращает статус 204."
+    ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_checklist(
