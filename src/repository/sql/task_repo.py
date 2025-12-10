@@ -3,7 +3,6 @@ from datetime import datetime
 
 from sqlalchemy import and_, asc, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
 
 from src.core.db.models import Task, TaskTag
 

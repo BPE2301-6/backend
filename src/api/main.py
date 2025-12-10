@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.lifespan import lifespan
 from src.apps import api_router  # основной router
@@ -13,6 +14,14 @@ app = FastAPI(title="My FastAPI App", version="1.0.0", lifespan=lifespan)
 app.add_middleware(MetricsMiddleware)
 # Register API
 app.include_router(api_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cfg.docs.allowed_ips,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Опционально: Middleware, Exceptions
 # setup_middlewares(app)
