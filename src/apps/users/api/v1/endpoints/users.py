@@ -66,4 +66,4 @@ async def get_user(
     user_id: UUID,
     service_manager: Service = Depends(get_service_manager),
 ) -> UserResponse:
-    return await service_manager.user_service().get(user_id)
+    return map_model(await service_manager.user_service().get(user_id), UserResponse)
