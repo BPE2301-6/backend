@@ -152,7 +152,8 @@ async def create_comment(
     payload = data.model_dump(exclude_unset=True)
     payload["task_id"] = task_id
     payload["author_id"] = user_id
-    return await service_manager.comment_service().create(payload)
+    dto = await service_manager.comment_service().create(payload)
+    return map_model(dto, CommentResponse)
 
 
 @router.get(
