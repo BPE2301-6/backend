@@ -60,8 +60,6 @@ async def list_projects(
         limit=limit,
         offset=offset,
     )
-    
-
 @router.get(
     "/{project_id}",
     summary="Получить проект",
