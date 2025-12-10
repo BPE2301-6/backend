@@ -1,5 +1,8 @@
 from uuid import UUID
 from pydantic import BaseModel
+from datetime import datetime
+
+from .common import Paginated
 
 
 class ProjectCreateRequest(BaseModel):
@@ -21,3 +24,7 @@ class ProjectResponse(BaseModel):
     name: str
     description: str | None
     lead_id: UUID
+    created_at: datetime
+    updated_at: datetime
+
+class ProjectListResponse(Paginated[ProjectResponse]): ...

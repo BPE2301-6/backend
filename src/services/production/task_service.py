@@ -15,6 +15,8 @@ class TaskServiceImpl(BaseService[TaskDTO]):
         return item
 
     async def create(self, data: dict) -> TaskDTO:
+        tag_ids = data.pop("tag_ids", None)
+        # TODO: обновление таблицы task_tag
         item = await self.store.task_repo().create(data)
         return item
 

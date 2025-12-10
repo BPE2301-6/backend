@@ -1,5 +1,6 @@
 from uuid import UUID
 from pydantic import BaseModel, Field
+from datetime import datetime
 
 
 class StatusCreateRequest(BaseModel):
@@ -20,3 +21,4 @@ class StatusResponse(BaseModel):
     name: str
     position: int
     is_closed: bool
+    created_at: datetime
