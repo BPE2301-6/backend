@@ -14,7 +14,6 @@ from src.schemas.pydantic import (
     CommentRequest,
     CommentResponse,
     CommentListResponse,
-    ChecklistRequest,
     ChecklistResponse
 )
 
