@@ -2,53 +2,67 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, status
 
-from src.core.dependencies import get_service_manager
+from src.core.dependencies import get_current_user_id, get_service_manager
+from src.core.utils import map_model
+from src.schemas.pydantic import (
+    ChecklistResponse,
+    CommentListResponse,
+    CommentRequest,
+    CommentResponse,
+    TaskMoveRequest,
+    TaskResponse,
+    TaskTagRequest,
+    TaskTagResponse,
+    TaskUpdateRequest,
+)
+from src.services import Service
 
 router = APIRouter(prefix="/tasks")
 
 
 @router.get(
-    path="/{task_id}",
+    "/{task_id}",
     summary="Получить задачу",
     description="Возвращает данные задачи по указанному идентификатору.",
 )
-async def get_task(task_id: UUID, service_manager=Depends(get_service_manager)):
-    return await service_manager.task_service().get(task_id)
+async def get_task(
+    task_id: UUID, service_manager: Service = Depends(get_service_manager)
+) -> TaskResponse:
+    dto = await service_manager.task_service().get(task_id)
+    return map_model(dto, TaskResponse)
 
 
 @router.patch(
-    path="/{task_id}",
+    "/{task_id}",
     summary="Обновить задачу",
-    description=(
-        "Обновляет данные задачи по указанному идентификатору. " "Возвращает обновлённый объект."
-    ),
+    description="Обновляет данные задачи по указанному идентификатору. Возвращает обновлённый объект.",
 )
-async def update_task(task_id: UUID, data: dict, service_manager=Depends(get_service_manager)):
-    return await service_manager.task_service().update(task_id, data)
+async def update_task(
+    task_id: UUID, data: TaskUpdateRequest, service_manager: Service = Depends(get_service_manager)
+) -> TaskResponse:
+    dto = await service_manager.task_service().update(task_id, data.model_dump(exclude_unset=True))
+    return map_model(dto, TaskResponse)
 
 
 @router.post(
-    path="/{task_id}/move",
+    "/{task_id}/move",
     summary="Переместить задачу",
-    description=(
-        "Переводит задачу в другой статус по указанному идентификатору. "
-        "Возвращает обновлённый объект."
-    ),
+    description="Переводит задачу в другой статус по указанному идентификатору. Возвращает обновлённый объект.",
 )
-async def move_task(task_id: UUID, data: dict, service_manager=Depends(get_service_manager)):
-    return await service_manager.task_service().update(task_id, data)
+async def move_task(
+    task_id: UUID, data: TaskMoveRequest, service_manager: Service = Depends(get_service_manager)
+) -> TaskResponse:
+    dto = await service_manager.task_service().update(task_id, data.model_dump(exclude_unset=True))
+    return map_model(dto, TaskResponse)
 
 
 @router.delete(
-    path="/{task_id}",
+    "/{task_id}",
     summary="Удалить задачу",
-    description=(
-        "Удаляет задачу по указанному идентификатору. "
-        "При успешном выполнении возвращает статус 204."
-    ),
+    description="Удаляет задачу по указанному идентификатору. При успешном выполнении возвращает статус 204.",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_task(task_id: UUID, service_manager=Depends(get_service_manager)):
+async def delete_task(task_id: UUID, service_manager: Service = Depends(get_service_manager)):
     await service_manager.task_service().delete(task_id)
 
 
@@ -61,11 +75,15 @@ async def delete_task(task_id: UUID, service_manager=Depends(get_service_manager
     ),
     status_code=status.HTTP_201_CREATED,
 )
-async def attach_tags(task_id: UUID, data: dict, service_manager=Depends(get_service_manager)):
-    tag_ids = data.get("tag_ids", [])
-    for tag_id in tag_ids:
+async def attach_tags(
+    task_id: UUID, data: TaskTagRequest, service_manager: Service = Depends(get_service_manager)
+) -> TaskTagResponse:
+    tag_ids: list[UUID] = []
+    for tag_id in data.tag_ids:
         await service_manager.task_tag_service().create({"task_id": task_id, "tag_id": tag_id})
-    return {"tag_ids": tag_ids}
+        tag_ids.append(tag_id)
+    # TODO: получать tag_ids из сервиса
+    return TaskTagResponse(tag_ids=tag_ids)
 
 
 @router.delete(
@@ -77,7 +95,9 @@ async def attach_tags(task_id: UUID, data: dict, service_manager=Depends(get_ser
     ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def detach_tag(task_id: UUID, tag_id: UUID, service_manager=Depends(get_service_manager)):
+async def detach_tag(
+    task_id: UUID, tag_id: UUID, service_manager: Service = Depends(get_service_manager)
+):
     await service_manager.task_tag_service().delete((task_id, tag_id))
 
 
@@ -94,12 +114,17 @@ async def list_comments(
     task_id: UUID,
     limit: int = Query(20, ge=1),
     offset: int = Query(0, ge=0),
-    service_manager=Depends(get_service_manager),
-):
-    comments, total = await service_manager.comment_service().get_all_by_task(
+    service_manager: Service = Depends(get_service_manager),
+) -> CommentListResponse:
+    items, total = await service_manager.comment_service().get_all_by_task(
         task_id, limit=limit, offset=offset
     )
-    return {"items": comments, "total": total, "limit": limit, "offset": offset}
+    return CommentListResponse(
+        items=[map_model(item, CommentResponse) for item in items],
+        total=total,
+        limit=limit,
+        offset=offset,
+    )
 
 
 @router.post(
@@ -108,9 +133,17 @@ async def list_comments(
     description="Создаёт новый комментарий по идентификатору задачи. Возвращает созданный объект.",
     status_code=status.HTTP_201_CREATED,
 )
-async def create_comment(task_id: UUID, data: dict, service_manager=Depends(get_service_manager)):
-    data["task_id"] = task_id
-    return await service_manager.comment_service().create(data)
+async def create_comment(
+    task_id: UUID,
+    data: CommentRequest,
+    user_id: UUID = Depends(get_current_user_id),
+    service_manager: Service = Depends(get_service_manager),
+) -> CommentResponse:
+    payload = data.model_dump(exclude_unset=True)
+    payload["task_id"] = task_id
+    payload["author_id"] = user_id
+    dto = await service_manager.comment_service().create(payload)
+    return map_model(dto, CommentResponse)
 
 
 @router.get(
@@ -119,9 +152,11 @@ async def create_comment(task_id: UUID, data: dict, service_manager=Depends(get_
     description="Возвращает список чеклистов по идентификатору задачи.",
     status_code=status.HTTP_200_OK,
 )
-async def get_checklists(task_id: UUID, service_manager=Depends(get_service_manager)):
+async def get_checklists(
+    task_id: UUID, service_manager: Service = Depends(get_service_manager)
+) -> list[ChecklistResponse]:
     checklist = await service_manager.checklist_service().get_by_task_id(task_id)
-    return [checklist] if checklist else []
+    return [map_model(checklist, ChecklistResponse)] if checklist else []
 
 
 @router.post(
@@ -130,6 +165,9 @@ async def get_checklists(task_id: UUID, service_manager=Depends(get_service_mana
     description="Создаёт новый чеклист по идентификатору задачи. Возвращает созданный объект.",
     status_code=status.HTTP_201_CREATED,
 )
-async def create_checklist(task_id: UUID, service_manager=Depends(get_service_manager)):
+async def create_checklist(
+    task_id: UUID, service_manager: Service = Depends(get_service_manager)
+) -> ChecklistResponse:
     data = {"task_id": task_id}
-    return await service_manager.checklist_service().create(data)
+    dto = await service_manager.checklist_service().create(data)
+    return map_model(dto, ChecklistResponse)

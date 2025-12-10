@@ -5,6 +5,8 @@ from sqlalchemy import and_, asc, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import Task, TaskTag
+from src.core.utils import map_model
+from src.schemas.dtos import TaskDTO
 
 from ..interfaces import BaseRepository
 
@@ -13,31 +15,37 @@ class TaskRepositoryImpl(BaseRepository[Task]):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_by_id(self, item_id: uuid.UUID) -> Task | None:
-        return await Task.get_by_id(self.session, item_id)
+    async def get_by_id(self, item_id: uuid.UUID) -> TaskDTO | None:
+        item = await Task.get_by_id(self.session, item_id)
+        if item is None:
+            return None
+        return map_model(item, TaskDTO)
 
-    async def create(self, data: dict) -> Task:
+    async def create(self, data: dict) -> TaskDTO:
         item = Task.from_dict(data)
-        return await item.save(self.session)
+        saved_item = await item.save(self.session)
+        return map_model(saved_item, TaskDTO)
 
-    async def update(self, item_id: uuid.UUID, data: dict) -> Task | None:
+    async def update(self, item_id: uuid.UUID, data: dict) -> TaskDTO | None:
         item = await Task.get_by_id(self.session, item_id)
         if item is None:
             return None
         item.update(**data)
-        return await item.save(self.session)
+        saved_item = await item.save(self.session)
+        return map_model(saved_item, TaskDTO)
 
     async def delete(self, item_id: uuid.UUID) -> None:
         item = await Task.get_by_id(self.session, item_id)
         if item is not None:
             await item.delete(self.session)
 
-    async def get_all(self) -> list[Task]:
-        return await Task.get_all(self.session)
+    async def get_all(self) -> list[TaskDTO]:
+        items = await Task.get_all(self.session)
+        return [map_model(i, TaskDTO) for i in items]
 
     async def get_all_by_project(
         self, project_id: uuid.UUID, filters: dict, limit: int, offset: int, sort: str
-    ) -> tuple[list[Task], int]:
+    ) -> tuple[list[TaskDTO], int]:
         stmt = select(Task).where(Task.project_id == project_id)
 
         filter_conditions = []
@@ -72,6 +80,7 @@ class TaskRepositoryImpl(BaseRepository[Task]):
         stmt = stmt.offset(offset).limit(limit)
         result = await self.session.execute(stmt)
         items = result.scalars().all()
+        dto_items = [map_model(i, TaskDTO) for i in items]
 
         count_stmt = select(func.count()).select_from(Task).where(Task.project_id == project_id)
         if filter_conditions:
@@ -79,4 +88,4 @@ class TaskRepositoryImpl(BaseRepository[Task]):
         total_result = await self.session.execute(count_stmt)
         total = total_result.scalar_one()
 
-        return items, total
+        return dto_items, total

@@ -1,14 +1,13 @@
-from typing import Any
-
 from fastapi import HTTPException, status
 
 from src.core.utils import AuthUtils
 from src.repository import Store
+from src.schemas.dtos import AuthDTO, UserDTO
 
 from ..interfaces import BaseService
 
 
-class AuthServiceImpl(BaseService[Any]):
+class AuthServiceImpl(BaseService[UserDTO]):
     def __init__(self, store: Store):
         self.store = store
 
@@ -27,7 +26,7 @@ class AuthServiceImpl(BaseService[Any]):
     async def get_all(self):
         raise NotImplementedError()
 
-    async def register(self, data: dict):
+    async def register(self, data: dict) -> UserDTO:
         email = data["email"].lower()
 
         existing = await self.store.user_repo().get_by_email(email)
@@ -52,7 +51,7 @@ class AuthServiceImpl(BaseService[Any]):
 
         return user
 
-    async def login(self, data: dict):
+    async def login(self, data: dict) -> AuthDTO:
         email = data["email"].lower()
         password = data["password"]
 

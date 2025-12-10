@@ -4,6 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import ProjectMember
+from src.core.utils import map_model
+from src.schemas.dtos import ProjectMemberDTO
 
 from ..interfaces import BaseRepository
 
@@ -12,31 +14,38 @@ class ProjectMemberRepositoryImpl(BaseRepository[ProjectMember]):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_by_id(self, item_id: tuple[uuid.UUID, uuid.UUID]) -> ProjectMember | None:
-        return await ProjectMember.get_by_id(self.session, item_id)
+    async def get_by_id(self, item_id: tuple[uuid.UUID, uuid.UUID]) -> ProjectMemberDTO | None:
+        item = await ProjectMember.get_by_id(self.session, item_id)
+        if item is None:
+            return None
+        return map_model(item, ProjectMemberDTO)
 
-    async def create(self, data: dict) -> ProjectMember:
+    async def create(self, data: dict) -> ProjectMemberDTO:
         item = ProjectMember.from_dict(data)
-        return await item.save(self.session)
+        saved_item = await item.save(self.session)
+        return map_model(saved_item, ProjectMemberDTO)
 
     async def update(
         self, item_id: tuple[uuid.UUID, uuid.UUID], data: dict
-    ) -> ProjectMember | None:
+    ) -> ProjectMemberDTO | None:
         item = await ProjectMember.get_by_id(self.session, item_id)
         if item is None:
             return None
         item.update(**data)
-        return await item.save(self.session)
+        saved_item = await item.save(self.session)
+        return map_model(saved_item, ProjectMemberDTO)
 
     async def delete(self, item_id: tuple[uuid.UUID, uuid.UUID]) -> None:
         item = await ProjectMember.get_by_id(self.session, item_id)
         if item is not None:
             await item.delete(self.session)
 
-    async def get_all(self) -> list[ProjectMember]:
-        return await ProjectMember.get_all(self.session)
+    async def get_all(self) -> list[ProjectMemberDTO]:
+        items = await ProjectMember.get_all(self.session)
+        return [map_model(i, ProjectMemberDTO) for i in items]
 
-    async def get_all_by_project(self, project_id: uuid.UUID) -> list[ProjectMember]:
+    async def get_all_by_project(self, project_id: uuid.UUID) -> list[ProjectMemberDTO]:
         stmt = select(ProjectMember).where(ProjectMember.project_id == project_id)
         result = await self.session.execute(stmt)
-        return result.scalars().all()
+        items = result.scalars().all()
+        return [map_model(i, ProjectMemberDTO) for i in items]

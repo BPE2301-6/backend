@@ -3,6 +3,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from src.core.dependencies import get_service_manager
+from src.core.utils import map_model
+from src.schemas.pydantic import TagResponse, TagUpdateRequest
 from src.services import Service
 
 router = APIRouter(prefix="/tags")
@@ -16,9 +18,10 @@ router = APIRouter(prefix="/tags")
     ),
 )
 async def update_tag(
-    tag_id: UUID, data: dict, service_manager: Service = Depends(get_service_manager)
-):
-    return await service_manager.tag_service().update(tag_id, data)
+    tag_id: UUID, data: TagUpdateRequest, service_manager: Service = Depends(get_service_manager)
+) -> TagResponse:
+    dto = await service_manager.tag_service().update(tag_id, data.model_dump(exclude_unset=True))
+    return map_model(dto, TagResponse)
 
 
 @router.delete(

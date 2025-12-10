@@ -1,36 +1,36 @@
-from typing import Any
 from uuid import UUID
 
 from src.repository import Store
+from src.schemas.dtos import CommentDTO
 
 from ..interfaces import BaseService
 
 
-class CommentServiceImpl(BaseService[Any]):
+class CommentServiceImpl(BaseService[CommentDTO]):
     def __init__(self, store: Store):
         self.store = store
 
-    async def get(self, item_id: UUID) -> Any | None:
+    async def get(self, item_id: UUID) -> CommentDTO | None:
         item = await self.store.comment_repo().get_by_id(item_id)
         return item
 
-    async def create(self, data: dict) -> Any:
+    async def create(self, data: dict) -> CommentDTO:
         item = await self.store.comment_repo().create(data)
         return item
 
-    async def update(self, item_id: UUID, data: dict) -> Any:
+    async def update(self, item_id: UUID, data: dict) -> CommentDTO:
         item = await self.store.comment_repo().update(item_id, data)
         return item
 
     async def delete(self, item_id: UUID) -> None:
         await self.store.comment_repo().delete(item_id)
 
-    async def get_all(self) -> list[Any]:
+    async def get_all(self) -> list[CommentDTO]:
         items = await self.store.comment_repo().get_all()
         return items
 
     async def get_all_by_task(
         self, task_id: UUID, limit: int, offset: int
-    ) -> tuple[list[Any], int]:
+    ) -> tuple[list[CommentDTO], int]:
         items, total = await self.store.comment_repo().get_all_by_task(task_id, limit, offset)
         return items, total

@@ -4,6 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import Status
+from src.core.utils import map_model
+from src.schemas.dtos import StatusDTO
 
 from ..interfaces import BaseRepository
 
@@ -12,29 +14,36 @@ class StatusRepositoryImpl(BaseRepository[Status]):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_by_id(self, item_id: uuid.UUID) -> Status | None:
-        return await Status.get_by_id(self.session, item_id)
+    async def get_by_id(self, item_id: uuid.UUID) -> StatusDTO | None:
+        item = await Status.get_by_id(self.session, item_id)
+        if item is None:
+            return None
+        return map_model(item, StatusDTO)
 
-    async def create(self, data: dict) -> Status:
+    async def create(self, data: dict) -> StatusDTO:
         item = Status.from_dict(data)
-        return await item.save(self.session)
+        saved_item = await item.save(self.session)
+        return map_model(saved_item, StatusDTO)
 
-    async def update(self, item_id: uuid.UUID, data: dict) -> Status | None:
+    async def update(self, item_id: uuid.UUID, data: dict) -> StatusDTO | None:
         item = await Status.get_by_id(self.session, item_id)
         if item is None:
             return None
         item.update(**data)
-        return await item.save(self.session)
+        saved_item = await item.save(self.session)
+        return map_model(saved_item, StatusDTO)
 
     async def delete(self, item_id: uuid.UUID) -> None:
         item = await Status.get_by_id(self.session, item_id)
         if item is not None:
             await item.delete(self.session)
 
-    async def get_all(self) -> list[Status]:
-        return await Status.get_all(self.session)
+    async def get_all(self) -> list[StatusDTO]:
+        items = await Status.get_all(self.session)
+        return [map_model(i, StatusDTO) for i in items]
 
-    async def get_all_by_project(self, project_id: uuid.UUID) -> list[Status]:
+    async def get_all_by_project(self, project_id: uuid.UUID) -> list[StatusDTO]:
         stmt = select(Status).where(Status.project_id == project_id).order_by(Status.position.asc())
         result = await self.session.execute(stmt)
-        return result.scalars().all()
+        items = result.scalars().all()
+        return [map_model(i, StatusDTO) for i in items]

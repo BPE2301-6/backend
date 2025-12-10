@@ -3,6 +3,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from src.core.dependencies import get_service_manager
+from src.core.utils import map_model
+from src.schemas.pydantic import StatusResponse, StatusUpdateRequest
 from src.services import Service
 
 router = APIRouter(prefix="/statuses")
@@ -16,9 +18,14 @@ router = APIRouter(prefix="/statuses")
     ),
 )
 async def update_status(
-    status_id: UUID, data: dict, service_manager: Service = Depends(get_service_manager)
-):
-    return await service_manager.status_service().update(status_id, data)
+    status_id: UUID,
+    data: StatusUpdateRequest,
+    service_manager: Service = Depends(get_service_manager),
+) -> StatusResponse:
+    dto = await service_manager.status_service().update(
+        status_id, data.model_dump(exclude_unset=True)
+    )
+    return map_model(dto, StatusResponse)
 
 
 @router.delete(

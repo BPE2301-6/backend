@@ -3,6 +3,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from src.core.dependencies import get_service_manager
+from src.core.utils import map_model
+from src.schemas.pydantic import ChecklistItemResponse, ChecklistItemUpdateRequest
 from src.services import Service
 
 router = APIRouter(prefix="/checklist-items")
@@ -17,9 +19,14 @@ router = APIRouter(prefix="/checklist-items")
     ),
 )
 async def update_checklist_item(
-    item_id: UUID, data: dict, service_manager: Service = Depends(get_service_manager)
-):
-    return await service_manager.checklist_item_service().update(item_id, data)
+    item_id: UUID,
+    data: ChecklistItemUpdateRequest,
+    service_manager: Service = Depends(get_service_manager),
+) -> ChecklistItemResponse:
+    dto = await service_manager.checklist_item_service().update(
+        item_id, data.model_dump(exclude_unset=True)
+    )
+    return map_model(dto, ChecklistItemResponse)
 
 
 @router.delete(
