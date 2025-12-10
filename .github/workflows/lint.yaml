@@ -66,7 +66,7 @@ jobs:
             ✅ **Линтер (ruff) прошел успешно**
             Репозиторий: `${{ github.repository }}`
             Ветка: `${{ github.ref }}`
-            🔗 [Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}`)
+            🔗 [Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
       - name: Notify Failure
         if: failure()

@@ -59,19 +59,22 @@ jobs:
       - name: run tests (treat exit code 5 as success)
         env:
           PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
-        shell: bash
         run: |
           set -o pipefail
+          set +e
 
           uv run pytest tests -vv -ra --maxfail=1 --durations=10 -s 2>&1 | tee pytest-logs.txt
           status=${PIPESTATUS[0]}
 
+          set -e
+
           if [ "$status" -eq 5 ]; then
-            echo "pytest: no tests collected (exit code 5) — считаем это успехом пока что"
+            echo "pytest: no tests collected (exit code 5) — считаем это успехом пока нет тестов"
             exit 0
           fi
 
           exit "$status"
+        shell: bash
 
       - name: upload pytest logs on failure
         if: failure()
@@ -92,7 +95,7 @@ jobs:
             ✅ **Тесты пройдены успешно**
             Репозиторий: `${{ github.repository }}`
             Ветка: `${{ github.ref }}`
-            🔗 [Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}`)
+            🔗 [Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
       - name: Notify Failure
         if: failure()

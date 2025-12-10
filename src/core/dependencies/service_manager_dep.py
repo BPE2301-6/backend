@@ -1,4 +1,4 @@
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 from src.core.db.uow import UnitOfWork
 from src.repository.store import StoreImpl
