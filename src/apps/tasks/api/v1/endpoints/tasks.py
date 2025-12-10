@@ -43,7 +43,8 @@ async def update_task(
     data: TaskUpdateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> TaskResponse:
-    return await service_manager.task_service().update(task_id, data.model_dump(exclude_unset=True))
+    dto = await service_manager.task_service().update(task_id, data.model_dump(exclude_unset=True))
+    return map_model(dto, TaskResponse)
 
 
 @router.post(
