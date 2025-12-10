@@ -1,6 +1,6 @@
 [project]
 name = "fastapi-monolith-template"
-version = "0.1.0"
+version = "1.0.0"
 description = "The templete which will help you to build a powerfull API"
 readme = "README.md"
 requires-python = ">=3.12"
