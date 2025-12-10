@@ -4,18 +4,18 @@ from fastapi import APIRouter, Depends, Query, status
 
 from src.core.dependencies import get_current_user_id, get_service_manager
 from src.core.utils import map_model
-from src.services import Service
 from src.schemas.pydantic import (
-    TaskUpdateRequest,
-    TaskResponse,
-    TaskMoveRequest,
-    TaskTagRequest,
-    TaskTagResponse,
+    ChecklistResponse,
+    CommentListResponse,
     CommentRequest,
     CommentResponse,
-    CommentListResponse,
-    ChecklistResponse
+    TaskMoveRequest,
+    TaskResponse,
+    TaskTagRequest,
+    TaskTagResponse,
+    TaskUpdateRequest,
 )
+from src.services import Service
 
 router = APIRouter(prefix="/tasks")
 
@@ -26,10 +26,10 @@ router = APIRouter(prefix="/tasks")
     description="Возвращает данные задачи по указанному идентификатору.",
 )
 async def get_task(
-    task_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    task_id: UUID, service_manager: Service = Depends(get_service_manager)
 ) -> TaskResponse:
-    return await service_manager.task_service().get(task_id)
+    dto = await service_manager.task_service().get(task_id)
+    return map_model(dto, TaskResponse)
 
 
 @router.patch(
@@ -38,9 +38,7 @@ async def get_task(
     description="Обновляет данные задачи по указанному идентификатору. Возвращает обновлённый объект.",
 )
 async def update_task(
-    task_id: UUID,
-    data: TaskUpdateRequest,
-    service_manager: Service = Depends(get_service_manager),
+    task_id: UUID, data: TaskUpdateRequest, service_manager: Service = Depends(get_service_manager)
 ) -> TaskResponse:
     dto = await service_manager.task_service().update(task_id, data.model_dump(exclude_unset=True))
     return map_model(dto, TaskResponse)
@@ -52,11 +50,10 @@ async def update_task(
     description="Переводит задачу в другой статус по указанному идентификатору. Возвращает обновлённый объект.",
 )
 async def move_task(
-    task_id: UUID,
-    data: TaskMoveRequest,
-    service_manager: Service = Depends(get_service_manager),
+    task_id: UUID, data: TaskMoveRequest, service_manager: Service = Depends(get_service_manager)
 ) -> TaskResponse:
-    return await service_manager.task_service().update(task_id, data.model_dump(exclude_unset=True))
+    dto = await service_manager.task_service().update(task_id, data.model_dump(exclude_unset=True))
+    return map_model(dto, TaskResponse)
 
 
 @router.delete(
@@ -65,10 +62,7 @@ async def move_task(
     description="Удаляет задачу по указанному идентификатору. При успешном выполнении возвращает статус 204.",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_task(
-    task_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
-):
+async def delete_task(task_id: UUID, service_manager: Service = Depends(get_service_manager)):
     await service_manager.task_service().delete(task_id)
 
 
@@ -82,9 +76,7 @@ async def delete_task(
     status_code=status.HTTP_201_CREATED,
 )
 async def attach_tags(
-    task_id: UUID,
-    data: TaskTagRequest,
-    service_manager: Service = Depends(get_service_manager),
+    task_id: UUID, data: TaskTagRequest, service_manager: Service = Depends(get_service_manager)
 ) -> TaskTagResponse:
     tag_ids: list[UUID] = []
     for tag_id in data.tag_ids:
@@ -104,9 +96,7 @@ async def attach_tags(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def detach_tag(
-    task_id: UUID,
-    tag_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    task_id: UUID, tag_id: UUID, service_manager: Service = Depends(get_service_manager)
 ):
     await service_manager.task_tag_service().delete((task_id, tag_id))
 
@@ -163,11 +153,10 @@ async def create_comment(
     status_code=status.HTTP_200_OK,
 )
 async def get_checklists(
-    task_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    task_id: UUID, service_manager: Service = Depends(get_service_manager)
 ) -> list[ChecklistResponse]:
     checklist = await service_manager.checklist_service().get_by_task_id(task_id)
-    return [checklist] if checklist else []
+    return [map_model(checklist, ChecklistResponse)] if checklist else []
 
 
 @router.post(
@@ -177,8 +166,8 @@ async def get_checklists(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_checklist(
-    task_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    task_id: UUID, service_manager: Service = Depends(get_service_manager)
 ) -> ChecklistResponse:
     data = {"task_id": task_id}
-    return await service_manager.checklist_service().create(data)
+    dto = await service_manager.checklist_service().create(data)
+    return map_model(dto, ChecklistResponse)

@@ -1,9 +1,10 @@
 import uuid
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import TaskSequence
-from src.schemas.dtos import TaskSequenceDTO
 from src.core.utils import map_model
+from src.schemas.dtos import TaskSequenceDTO
 
 from ..interfaces import BaseRepository
 

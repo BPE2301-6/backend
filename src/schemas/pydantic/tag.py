@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from pydantic import BaseModel
 
 from .common import Paginated
@@ -19,6 +20,7 @@ class TagResponse(BaseModel):
     project_id: UUID
     name: str
     color: str | None
+
 
 class TagListItem(BaseModel):
     id: UUID

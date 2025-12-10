@@ -3,8 +3,8 @@ import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import ChecklistItem
+from src.core.utils import map_model
 from src.schemas.dtos import ChecklistItemDTO
-from src.core.utils import map_model  
 
 from ..interfaces import BaseRepository
 

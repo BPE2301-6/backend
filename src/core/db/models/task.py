@@ -19,6 +19,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.schemas.enums import TaskPriority
+
 from ..base import Base
 
 if TYPE_CHECKING:

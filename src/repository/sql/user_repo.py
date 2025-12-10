@@ -1,10 +1,11 @@
 import uuid
+
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import User
-from src.schemas.dtos import UserDTO
 from src.core.utils import map_model
+from src.schemas.dtos import UserDTO
 
 from ..interfaces import BaseRepository
 
@@ -49,7 +50,9 @@ class UserRepositoryImpl(BaseRepository[User]):
             return None
         return map_model(item, UserDTO)
 
-    async def get_list(self, search: str | None, limit: int, offset: int) -> tuple[list[UserDTO], int]:
+    async def get_list(
+        self, search: str | None, limit: int, offset: int
+    ) -> tuple[list[UserDTO], int]:
         stmt = select(User)
 
         if search:

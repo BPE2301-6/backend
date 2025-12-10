@@ -8,6 +8,7 @@ from sqlalchemy import DateTime, Enum, ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.schemas.enums import ProjectRole
+
 from ..base import Base
 
 if TYPE_CHECKING:

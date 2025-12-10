@@ -1,10 +1,11 @@
 import uuid
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import Tag
-from src.schemas.dtos import TagDTO
 from src.core.utils import map_model
+from src.schemas.dtos import TagDTO
 
 from ..interfaces import BaseRepository
 

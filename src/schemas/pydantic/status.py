@@ -1,6 +1,7 @@
-from uuid import UUID
-from pydantic import BaseModel, Field
 from datetime import datetime
+from uuid import UUID
+
+from pydantic import BaseModel, Field
 
 
 class StatusCreateRequest(BaseModel):

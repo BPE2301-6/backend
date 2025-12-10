@@ -3,8 +3,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from src.core.dependencies import get_service_manager
+from src.core.utils import map_model
+from src.schemas.pydantic import StatusResponse, StatusUpdateRequest
 from src.services import Service
-from src.schemas.pydantic import StatusUpdateRequest, StatusResponse
 
 router = APIRouter(prefix="/statuses")
 
@@ -13,8 +14,7 @@ router = APIRouter(prefix="/statuses")
     "/{status_id}",
     summary="Обновить статус",
     description=(
-        "Обновляет данные статуса по указанному идентификатору. "
-        "Возвращает обновлённый объект."
+        "Обновляет данные статуса по указанному идентификатору. " "Возвращает обновлённый объект."
     ),
 )
 async def update_status(
@@ -22,7 +22,10 @@ async def update_status(
     data: StatusUpdateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> StatusResponse:
-    return await service_manager.status_service().update(status_id, data.model_dump(exclude_unset=True))
+    dto = await service_manager.status_service().update(
+        status_id, data.model_dump(exclude_unset=True)
+    )
+    return map_model(dto, StatusResponse)
 
 
 @router.delete(
@@ -34,9 +37,6 @@ async def update_status(
     ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_status(
-    status_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
-):
+async def delete_status(status_id: UUID, service_manager: Service = Depends(get_service_manager)):
     # TODO: проверить наличие связанных задач и вернуть 409, если они есть
     await service_manager.status_service().delete(status_id)

@@ -4,25 +4,25 @@ from fastapi import APIRouter, Depends, Query, status
 
 from src.core.dependencies import get_service_manager
 from src.core.utils import map_model
-from src.services import Service
 from src.schemas.pydantic import (
     ProjectCreateRequest,
-    ProjectUpdateRequest,
-    ProjectResponse,
     ProjectListResponse,
     ProjectMemberCreateRequest,
-    ProjectMemberUpdateRequest,
     ProjectMemberResponse,
+    ProjectMemberUpdateRequest,
+    ProjectResponse,
+    ProjectUpdateRequest,
     StatusCreateRequest,
     StatusResponse,
-    TaskCreateRequest,
-    TaskResponse,
-    TagListItem,
-    TaskListResponse,
     TagCreateRequest,
+    TagListItem,
+    TagListResponse,
     TagResponse,
-    TagListResponse
+    TaskCreateRequest,
+    TaskListResponse,
+    TaskResponse,
 )
+from src.services import Service
 
 router = APIRouter(prefix="/projects")
 
@@ -34,16 +34,16 @@ router = APIRouter(prefix="/projects")
     description="Создаёт новый проект. Возвращает созданный объект.",
 )
 async def create_project(
-    data: ProjectCreateRequest,
-    service_manager: Service = Depends(get_service_manager),
+    data: ProjectCreateRequest, service_manager: Service = Depends(get_service_manager)
 ) -> ProjectResponse:
-    return await service_manager.project_service().create(data.model_dump(exclude_unset=True))
+    dto = await service_manager.project_service().create(data.model_dump(exclude_unset=True))
+    return map_model(dto, ProjectResponse)
 
 
 @router.get(
     "",
     summary="Получить список проектов",
-    description= "Возвращает список проектов. Поддерживает поиск по имени и ключу, а также пагинацию.",
+    description="Возвращает список проектов. Поддерживает поиск по имени и ключу, а также пагинацию.",
 )
 async def list_projects(
     search: str | None = Query(default=None),
@@ -60,16 +60,18 @@ async def list_projects(
         limit=limit,
         offset=offset,
     )
+
+
 @router.get(
     "/{project_id}",
     summary="Получить проект",
     description="Возвращает данные проекта по указанному идентификатору.",
 )
 async def get_project(
-    project_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    project_id: UUID, service_manager: Service = Depends(get_service_manager)
 ) -> ProjectResponse:
-    return await service_manager.project_service().get(project_id)
+    dto = await service_manager.project_service().get(project_id)
+    return map_model(dto, ProjectResponse)
 
 
 @router.patch(
@@ -82,7 +84,10 @@ async def update_project(
     data: ProjectUpdateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> ProjectResponse:
-    return await service_manager.project_service().update(project_id, data.model_dump(exclude_unset=True))
+    dto = await service_manager.project_service().update(
+        project_id, data.model_dump(exclude_unset=True)
+    )
+    return map_model(dto, ProjectResponse)
 
 
 @router.delete(
@@ -91,10 +96,7 @@ async def update_project(
     summary="Удалить проект",
     description="Удаляет проект по указанному идентификатору. При успешном выполнении возвращает статус 204.",
 )
-async def delete_project(
-    project_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
-):
+async def delete_project(project_id: UUID, service_manager: Service = Depends(get_service_manager)):
     await service_manager.project_service().delete(project_id)
 
 
@@ -105,10 +107,10 @@ async def delete_project(
     status_code=status.HTTP_200_OK,
 )
 async def get_project_members(
-    project_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    project_id: UUID, service_manager: Service = Depends(get_service_manager)
 ) -> list[ProjectMemberResponse]:
-    return await service_manager.project_member_service().get_all_by_project(project_id)
+    dtos = await service_manager.project_member_service().get_all_by_project(project_id)
+    return [map_model(dto, ProjectMemberResponse) for dto in dtos]
 
 
 @router.post(
@@ -124,7 +126,8 @@ async def add_project_member(
 ) -> ProjectMemberResponse:
     payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
-    return await service_manager.project_member_service().create(payload)
+    dto = await service_manager.project_member_service().create(payload)
+    return map_model(dto, ProjectMemberResponse)
 
 
 @router.patch(
@@ -140,7 +143,10 @@ async def update_project_member(
     service_manager: Service = Depends(get_service_manager),
 ) -> ProjectMemberResponse:
     item_id: tuple[UUID, UUID] = (project_id, user_id)
-    return await service_manager.project_member_service().update(item_id, data.model_dump(exclude_unset=True))
+    dto = await service_manager.project_member_service().update(
+        item_id, data.model_dump(exclude_unset=True)
+    )
+    return map_model(dto, ProjectMemberResponse)
 
 
 @router.delete(
@@ -150,9 +156,7 @@ async def update_project_member(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_project_member(
-    project_id: UUID,
-    user_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    project_id: UUID, user_id: UUID, service_manager: Service = Depends(get_service_manager)
 ):
     item_id: tuple[UUID, UUID] = (project_id, user_id)
     await service_manager.project_member_service().delete(item_id)
@@ -165,10 +169,10 @@ async def delete_project_member(
     status_code=status.HTTP_200_OK,
 )
 async def get_project_statuses(
-    project_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    project_id: UUID, service_manager: Service = Depends(get_service_manager)
 ) -> list[StatusResponse]:
-    return await service_manager.status_service().get_all_by_project(project_id)
+    dtos = await service_manager.status_service().get_all_by_project(project_id)
+    return [map_model(dto, StatusResponse) for dto in dtos]
 
 
 @router.post(
@@ -184,7 +188,8 @@ async def create_project_status(
 ) -> StatusResponse:
     payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
-    return await service_manager.status_service().create(payload)
+    dto = await service_manager.status_service().create(payload)
+    return map_model(dto, StatusResponse)
 
 
 @router.post(
@@ -200,7 +205,8 @@ async def create_project_task(
 ) -> TaskResponse:
     payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
-    return map_model(await service_manager.task_service().create(payload), TaskResponse)
+    dto = await service_manager.task_service().create(payload)
+    return map_model(dto, TaskResponse)
 
 
 @router.get(
@@ -249,6 +255,7 @@ async def list_project_tasks(
         offset=offset,
     )
 
+
 @router.get(
     "/{project_id}/tags",
     summary="Получить теги проекта",
@@ -283,4 +290,5 @@ async def create_project_tag(
 ) -> TagResponse:
     payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
-    return await service_manager.tag_service().create(payload)
+    dto = await service_manager.tag_service().create(payload)
+    return map_model(dto, TagResponse)

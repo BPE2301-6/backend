@@ -2,15 +2,14 @@ from fastapi import APIRouter, Depends, status
 
 from src.core.dependencies import get_service_manager
 from src.core.utils import map_model
-from src.services import Service
-
 from src.schemas.pydantic import (
-    AuthRegisterRequest,
     AuthLoginRequest,
-    AuthRegisterResponseUser,
+    AuthLoginResponse,
+    AuthRegisterRequest,
     AuthRegisterResponse,
-    AuthLoginResponse
+    AuthRegisterResponseUser,
 )
+from src.services import Service
 
 router = APIRouter(prefix="/auth")
 
@@ -22,8 +21,7 @@ router = APIRouter(prefix="/auth")
     description="Регистрирует нового пользователя. Возвращает созданный объект.",
 )
 async def register_user(
-    data: AuthRegisterRequest,
-    service_manager: Service = Depends(get_service_manager),
+    data: AuthRegisterRequest, service_manager: Service = Depends(get_service_manager)
 ) -> AuthRegisterResponse:
     user_dto = await service_manager.auth_service().register(data.model_dump(exclude_unset=True))
     user_response = map_model(user_dto, AuthRegisterResponseUser)
@@ -36,7 +34,6 @@ async def register_user(
     description="Авторизует пользователя по указанным данным. Возвращает токены доступа.",
 )
 async def login_user(
-    data: AuthLoginRequest,
-    service_manager: Service = Depends(get_service_manager),
+    data: AuthLoginRequest, service_manager: Service = Depends(get_service_manager)
 ) -> AuthLoginResponse:
     return await service_manager.auth_service().login(data.model_dump(exclude_unset=True))

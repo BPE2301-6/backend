@@ -11,7 +11,7 @@ U = TypeVar("U")
 
 def map_model(source: Any, target_type: type[U]) -> U:
     if source is None:
-        raise ValueError("Источник не может быть None")
+        raise ValueError("Source cannot be None")
 
     if isinstance(source, BaseModel):
         data = source.model_dump(exclude_unset=True)
@@ -22,7 +22,7 @@ def map_model(source: Any, target_type: type[U]) -> U:
     elif isinstance(source, dict):
         data = source
     else:
-        raise TypeError(f"Неподдерживаемый тип источника: {type(source)}")
+        raise TypeError(f"Unsupported source type: {type(source)}")
 
     target_fields = {f for f in getattr(target_type, "__annotations__", {})}
     filtered_data = {k: v for k, v in data.items() if k in target_fields}

@@ -1,14 +1,14 @@
 from .auth import AuthDTO
-from .checklist_item import ChecklistItemDTO
 from .checklist import ChecklistDTO
+from .checklist_item import ChecklistItemDTO
 from .comment import CommentDTO
-from .project_member import ProjectMemberDTO
 from .project import ProjectDTO
+from .project_member import ProjectMemberDTO
 from .status import StatusDTO
 from .tag import TagDTO
+from .task import TaskDTO
 from .task_sequence import TaskSequenceDTO
 from .task_tag import TaskTagDTO
-from .task import TaskDTO
 from .user import UserDTO
 
 __all__ = [

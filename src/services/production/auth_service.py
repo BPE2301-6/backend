@@ -1,10 +1,8 @@
-from typing import Any
-
 from fastapi import HTTPException, status
 
 from src.core.utils import AuthUtils
 from src.repository import Store
-from src.schemas.dtos import UserDTO, AuthDTO
+from src.schemas.dtos import AuthDTO, UserDTO
 
 from ..interfaces import BaseService
 

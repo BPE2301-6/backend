@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Query
 
 from src.core.dependencies import get_current_user_id, get_service_manager
 from src.core.utils import map_model
+from src.schemas.pydantic import UserListResponse, UserResponse, UserUpdateRequest
 from src.services import Service
-from src.schemas.pydantic import UserUpdateRequest, UserResponse, UserListResponse
 
 router = APIRouter(prefix="/users")
 
@@ -19,7 +19,8 @@ async def get_current_user(
     user_id: UUID = Depends(get_current_user_id),
     service_manager: Service = Depends(get_service_manager),
 ) -> UserResponse:
-    return await service_manager.user_service().get(user_id)
+    dto = await service_manager.user_service().get(user_id)
+    return map_model(dto, UserResponse)
 
 
 @router.patch(
@@ -32,7 +33,8 @@ async def update_current_user(
     user_id: UUID = Depends(get_current_user_id),
     service_manager: Service = Depends(get_service_manager),
 ) -> UserResponse:
-    return await service_manager.user_service().update(user_id, data.model_dump(exclude_unset=True))
+    dto = await service_manager.user_service().update(user_id, data.model_dump(exclude_unset=True))
+    return map_model(dto, UserResponse)
 
 
 @router.get(
@@ -63,7 +65,7 @@ async def list_users(
     description="Возвращает данные пользователя по указанному идентификатору.",
 )
 async def get_user(
-    user_id: UUID,
-    service_manager: Service = Depends(get_service_manager),
+    user_id: UUID, service_manager: Service = Depends(get_service_manager)
 ) -> UserResponse:
-    return map_model(await service_manager.user_service().get(user_id), UserResponse)
+    dto = await service_manager.user_service().get(user_id)
+    return map_model(dto, UserResponse)

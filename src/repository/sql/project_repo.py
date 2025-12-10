@@ -1,10 +1,11 @@
 import uuid
+
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import Project
-from src.schemas.dtos import ProjectDTO
 from src.core.utils import map_model
+from src.schemas.dtos import ProjectDTO
 
 from ..interfaces import BaseRepository
 
