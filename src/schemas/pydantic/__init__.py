@@ -7,7 +7,7 @@ from .project import ProjectCreateRequest, ProjectUpdateRequest, ProjectResponse
 from .status import StatusCreateRequest, StatusUpdateRequest, StatusResponse
 from .tag import TagCreateRequest, TagUpdateRequest, TagResponse, TagListItem, TagListResponse
 from .task_tag import TaskTagRequest, TaskTagResponse
-from .task import TaskCreateRequest, TaskUpdateRequest, TaskResponse, TaskListResponse
+from .task import TaskCreateRequest, TaskUpdateRequest, TaskMoveRequest, TaskResponse, TaskListResponse
 from .user import UserResponse, UserUpdateRequest, UserListResponse
 
 __all__ = [
@@ -43,6 +43,7 @@ __all__ = [
     "TaskTagResponse",
     "TaskCreateRequest",
     "TaskUpdateRequest",
+    "TaskMoveRequest",
     "TaskResponse",
     "TaskListResponse",
     "UserResponse",

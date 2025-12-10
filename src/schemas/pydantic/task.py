@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, date
 from pydantic import BaseModel
 
 from .common import Paginated
@@ -41,7 +41,7 @@ class TaskResponse(BaseModel):
     priority: str
     reporter_id: UUID
     assignee_id: UUID | None
-    due_date: datetime | None
+    due_date: date | None
     created_at: datetime
     updated_at: datetime
 
