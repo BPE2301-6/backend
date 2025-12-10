@@ -3,6 +3,13 @@ from fastapi import APIRouter, Depends, status
 from src.core.dependencies import get_service_manager
 from src.services import Service
 
+from src.schemas.pydantic import (
+    AuthRegisterRequest,
+    AuthLoginRequest,
+    AuthRegisterResponse,
+    AuthLoginResponse,
+)
+
 router = APIRouter(prefix="/auth")
 
 
@@ -12,7 +19,10 @@ router = APIRouter(prefix="/auth")
     summary="Зарегистрировать пользователя",
     description="Регистрирует нового пользователя. Возвращает созданный объект.",
 )
-async def register_user(data: dict, service_manager: Service = Depends(get_service_manager)):
+async def register_user(
+    data: AuthRegisterRequest,
+    service_manager: Service = Depends(get_service_manager),
+) -> AuthRegisterResponse:
     return await service_manager.auth_service().register(data)
 
 
@@ -21,5 +31,8 @@ async def register_user(data: dict, service_manager: Service = Depends(get_servi
     summary="Авторизовать пользователя",
     description="Авторизует пользователя по указанным данным. Возвращает токены доступа.",
 )
-async def login_user(data: dict, service_manager: Service = Depends(get_service_manager)):
+async def login_user(
+    data: AuthLoginRequest,
+    service_manager: Service = Depends(get_service_manager),
+) -> AuthLoginResponse:
     return await service_manager.auth_service().login(data)
