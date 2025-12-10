@@ -1,3 +1,4 @@
+from .auth import AuthDTO
 from .checklist_item import ChecklistItemDTO
 from .checklist import ChecklistDTO
 from .comment import CommentDTO
@@ -11,6 +12,7 @@ from .task import TaskDTO
 from .user import UserDTO
 
 __all__ = [
+    "AuthDTO",
     "ChecklistItemDTO",
     "ChecklistDTO",
     "CommentDTO",

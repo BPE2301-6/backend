@@ -8,6 +8,7 @@ class UserDTO:
     id: UUID
     email: str
     name: str
+    hashed_password: str
     avatar_url: str | None
     created_at: datetime
     updated_at: datetime
