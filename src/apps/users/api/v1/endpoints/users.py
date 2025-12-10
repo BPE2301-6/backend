@@ -1,8 +1,11 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from src.core.dependencies import get_current_user_id, get_service_manager
+from src.core.utils import map_model
+from src.services import Service
+from src.schemas.pydantic import UserUpdateRequest, UserResponse, UserListResponse
 
 router = APIRouter(prefix="/users")
 
@@ -13,8 +16,9 @@ router = APIRouter(prefix="/users")
     description="Возвращает информацию о текущем пользователе.",
 )
 async def get_current_user(
-    user_id=Depends(get_current_user_id), service_manager=Depends(get_service_manager)
-):
+    user_id: UUID = Depends(get_current_user_id),
+    service_manager: Service = Depends(get_service_manager),
+) -> UserResponse:
     return await service_manager.user_service().get(user_id)
 
 
@@ -24,9 +28,11 @@ async def get_current_user(
     description="Обновляет данные текущего пользователя. Возвращает обновлённый объект.",
 )
 async def update_current_user(
-    data: dict, user_id=Depends(get_current_user_id), service_manager=Depends(get_service_manager)
-):
-    return await service_manager.user_service().update(user_id, data)
+    data: UserUpdateRequest,
+    user_id: UUID = Depends(get_current_user_id),
+    service_manager: Service = Depends(get_service_manager),
+) -> UserResponse:
+    return await service_manager.user_service().update(user_id, data.model_dump(exclude_unset=True))
 
 
 @router.get(
@@ -35,12 +41,20 @@ async def update_current_user(
     description="Возвращает список пользователей по имени или email.",
 )
 async def list_users(
-    search: str = "", limit: int = 20, offset: int = 0, service_manager=Depends(get_service_manager)
-):
-    users, total = await service_manager.user_service().get_list(
+    search: str = Query("", description="Фильтр по имени или email"),
+    limit: int = Query(20, ge=1),
+    offset: int = Query(0, ge=0),
+    service_manager: Service = Depends(get_service_manager),
+) -> UserListResponse:
+    items, total = await service_manager.user_service().get_list(
         search=search, limit=limit, offset=offset
     )
-    return {"items": users, "total": total, "limit": limit, "offset": offset}
+    return UserListResponse(
+        items=[map_model(item, UserResponse) for item in items],
+        total=total,
+        limit=limit,
+        offset=offset,
+    )
 
 
 @router.get(
@@ -48,6 +62,8 @@ async def list_users(
     summary="Получить пользователя",
     description="Возвращает данные пользователя по указанному идентификатору.",
 )
-async def get_user(user_id: UUID, service_manager=Depends(get_service_manager)):
-    user = await service_manager.user_service().get(user_id)
-    return user
+async def get_user(
+    user_id: UUID,
+    service_manager: Service = Depends(get_service_manager),
+) -> UserResponse:
+    return await service_manager.user_service().get(user_id)

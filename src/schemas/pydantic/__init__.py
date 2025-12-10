@@ -1,4 +1,4 @@
-from .auth import AuthRegisterRequest, AuthLoginRequest, AuthRegisterResponse, AuthLoginResponse
+from .auth import AuthRegisterRequest, AuthLoginRequest, AuthRegisterResponseUser, AuthRegisterResponse, AuthLoginResponse
 from .checklist_item import ChecklistItemCreateRequest, ChecklistItemUpdateRequest, ChecklistItemResponse
 from .checklist import ChecklistRequest, ChecklistResponse
 from .comment import CommentRequest, CommentResponse, CommentListResponse
@@ -13,6 +13,7 @@ from .user import UserResponse, UserUpdateRequest, UserListResponse
 __all__ = [
     "AuthRegisterRequest",
     "AuthLoginRequest",
+    "AuthRegisterResponseUser",
     "AuthRegisterResponse",
     "AuthLoginResponse",
     "ChecklistItemCreateRequest",
