@@ -202,7 +202,7 @@ async def create_project_task(
 ) -> TaskResponse:
     payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
-    return await service_manager.task_service().create(payload)
+    return map_model(await service_manager.task_service().create(payload), TaskResponse)
 
 
 @router.get(
