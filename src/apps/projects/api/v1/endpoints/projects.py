@@ -37,7 +37,7 @@ async def create_project(
     data: ProjectCreateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> ProjectResponse:
-    return await service_manager.project_service().create(data.model_dump())
+    return await service_manager.project_service().create(data.model_dump(exclude_unset=True))
 
 
 @router.get(
@@ -84,7 +84,7 @@ async def update_project(
     data: ProjectUpdateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> ProjectResponse:
-    return await service_manager.project_service().update(project_id, data.model_dump())
+    return await service_manager.project_service().update(project_id, data.model_dump(exclude_unset=True))
 
 
 @router.delete(
@@ -124,7 +124,7 @@ async def add_project_member(
     data: ProjectMemberCreateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> ProjectMemberResponse:
-    payload = data.model_dump()
+    payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
     return await service_manager.project_member_service().create(payload)
 
@@ -142,7 +142,7 @@ async def update_project_member(
     service_manager: Service = Depends(get_service_manager),
 ) -> ProjectMemberResponse:
     item_id: tuple[UUID, UUID] = (project_id, user_id)
-    return await service_manager.project_member_service().update(item_id, data.model_dump())
+    return await service_manager.project_member_service().update(item_id, data.model_dump(exclude_unset=True))
 
 
 @router.delete(
@@ -184,7 +184,7 @@ async def create_project_status(
     data: StatusCreateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> StatusResponse:
-    payload = data.model_dump()
+    payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
     return await service_manager.status_service().create(payload)
 
@@ -200,7 +200,7 @@ async def create_project_task(
     data: TaskCreateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> TaskResponse:
-    payload = data.model_dump()
+    payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
     return await service_manager.task_service().create(payload)
 
@@ -283,6 +283,6 @@ async def create_project_tag(
     data: TagCreateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> TagResponse:
-    payload = data.model_dump()
+    payload = data.model_dump(exclude_unset=True)
     payload["project_id"] = project_id
     return await service_manager.tag_service().create(payload)

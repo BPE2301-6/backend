@@ -26,7 +26,7 @@ async def update_checklist_item(
     data: ChecklistItemUpdateRequest,
     service_manager: Service = Depends(get_service_manager),
 ) -> ChecklistItemResponse:
-    return await service_manager.checklist_item_service().update(item_id, data)
+    return await service_manager.checklist_item_service().update(item_id, data.model_dump(exclude_unset=True))
 
 
 @router.delete(
