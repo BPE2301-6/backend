@@ -28,4 +28,4 @@ async def register_user(data: dict, service_manager: Service = Depends(get_servi
     description="Авторизует пользователя по указанным данным. Возвращает токены доступа.",
 )
 async def login_user(data: dict, service_manager: Service = Depends(get_service_manager)):
-    return await service_manager.auth_service().login(data["email"], data["password"])
+    return await service_manager.auth_service().login(data)
