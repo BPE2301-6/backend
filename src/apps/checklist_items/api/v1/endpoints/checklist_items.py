@@ -5,6 +5,11 @@ from fastapi import APIRouter, Depends, status
 from src.core.dependencies import get_service_manager
 from src.services import Service
 
+from src.schemas.pydantic import (
+    ChecklistItemUpdateRequest,
+    ChecklistItemResponse
+)
+
 router = APIRouter(prefix="/checklist-items")
 
 
@@ -17,8 +22,10 @@ router = APIRouter(prefix="/checklist-items")
     ),
 )
 async def update_checklist_item(
-    item_id: UUID, data: dict, service_manager: Service = Depends(get_service_manager)
-):
+    item_id: UUID,
+    data: ChecklistItemUpdateRequest,
+    service_manager: Service = Depends(get_service_manager),
+) -> ChecklistItemResponse:
     return await service_manager.checklist_item_service().update(item_id, data)
 
 
@@ -32,6 +39,7 @@ async def update_checklist_item(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_checklist_item(
-    item_id: UUID, service_manager: Service = Depends(get_service_manager)
+    item_id: UUID,
+    service_manager: Service = Depends(get_service_manager),
 ):
     await service_manager.checklist_item_service().delete(item_id)
