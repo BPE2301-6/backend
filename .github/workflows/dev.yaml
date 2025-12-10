@@ -21,11 +21,11 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            🚀 **Деплой backend на dev**
+            🚀 **Запуск деплоя на dev-окружение**
             Репозиторий: `${{ github.repository }}`
             Ветка: `${{ github.ref }}`
-            Автор: `${{ github.actor }}`
-            🔗 [Workflow](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            Коммит: `${{ github.event.head_commit.message }}`
+            🔗 [Открыть коммит](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
 
       - name: Install SSH key
         run: |
@@ -69,9 +69,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            ✅ **Backend dev деплоился успешно**
-            Репозиторий: `${{ github.repository }}`
-            Ветка: `${{ github.ref }}`
+            ✅ **Деплой на dev-окружение завершён успешно**
             🔗 [Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
       - name: Notify Failure
@@ -82,10 +80,9 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            ❌ **Backend dev деплой упал**
+            ❌ **Ошибка при деплое на dev-окружение**
             Репозиторий: `${{ github.repository }}`
             Ветка: `${{ github.ref }}`
-            Автор: `${{ github.actor }}`
             🔗 [Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
       - name: Cleanup
