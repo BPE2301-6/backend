@@ -2,7 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-from src.core.dependencies import get_service_manager, get_current_user_id
+from src.core.dependencies import get_current_user_id, get_service_manager
 
 router = APIRouter(prefix="/users")
 
@@ -13,8 +13,7 @@ router = APIRouter(prefix="/users")
     description="Возвращает информацию о текущем пользователе.",
 )
 async def get_current_user(
-    user_id=Depends(get_current_user_id),
-    service_manager=Depends(get_service_manager)
+    user_id=Depends(get_current_user_id), service_manager=Depends(get_service_manager)
 ):
     return await service_manager.user_service().get(user_id)
 
@@ -25,9 +24,7 @@ async def get_current_user(
     description="Обновляет данные текущего пользователя. Возвращает обновлённый объект.",
 )
 async def update_current_user(
-    data: dict,
-    user_id=Depends(get_current_user_id),
-    service_manager=Depends(get_service_manager)
+    data: dict, user_id=Depends(get_current_user_id), service_manager=Depends(get_service_manager)
 ):
     return await service_manager.user_service().update(user_id, data)
 

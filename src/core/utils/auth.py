@@ -1,7 +1,9 @@
-from passlib.hash import argon2
-import jwt
-from datetime import datetime, timezone, timedelta
 import os
+from datetime import UTC, datetime, timedelta
+
+import jwt
+from passlib.hash import argon2
+
 
 class AuthUtils:
     SECRET = os.getenv("JWT_SECRET", "supersecretkey")
@@ -19,7 +21,7 @@ class AuthUtils:
     @classmethod
     def create_access_token(cls, data: dict) -> str:
         to_encode = data.copy()
-        expire = datetime.now(timezone.utc) + timedelta(seconds=cls.EXPIRES_IN)
+        expire = datetime.now(UTC) + timedelta(seconds=cls.EXPIRES_IN)
         to_encode.update({"exp": expire})
         token = jwt.encode(to_encode, cls.SECRET, algorithm=cls.ALGORITHM)
         return token

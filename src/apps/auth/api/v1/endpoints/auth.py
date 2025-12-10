@@ -1,9 +1,3 @@
-from fastapi import APIRouter
-from starlette import status
-
-router = APIRouter(prefix="/auth")
-
-
 from fastapi import APIRouter, Depends, status
 
 from src.core.dependencies import get_service_manager

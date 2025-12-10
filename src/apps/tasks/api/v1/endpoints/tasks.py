@@ -19,7 +19,9 @@ async def get_task(task_id: UUID, service_manager=Depends(get_service_manager)):
 @router.patch(
     path="/{task_id}",
     summary="Обновить задачу",
-    description="Обновляет данные задачи по указанному идентификатору. Возвращает обновлённый объект.",
+    description=(
+        "Обновляет данные задачи по указанному идентификатору. " "Возвращает обновлённый объект."
+    ),
 )
 async def update_task(task_id: UUID, data: dict, service_manager=Depends(get_service_manager)):
     return await service_manager.task_service().update(task_id, data)
@@ -28,7 +30,10 @@ async def update_task(task_id: UUID, data: dict, service_manager=Depends(get_ser
 @router.post(
     path="/{task_id}/move",
     summary="Переместить задачу",
-    description="Переводит задачу в другой статус по указанному идентификатору. Возвращает обновлённый объект.",
+    description=(
+        "Переводит задачу в другой статус по указанному идентификатору. "
+        "Возвращает обновлённый объект."
+    ),
 )
 async def move_task(task_id: UUID, data: dict, service_manager=Depends(get_service_manager)):
     return await service_manager.task_service().update(task_id, data)
@@ -37,7 +42,10 @@ async def move_task(task_id: UUID, data: dict, service_manager=Depends(get_servi
 @router.delete(
     path="/{task_id}",
     summary="Удалить задачу",
-    description="Удаляет задачу по указанному идентификатору. При успешном выполнении возвращает статус 204.",
+    description=(
+        "Удаляет задачу по указанному идентификатору. "
+        "При успешном выполнении возвращает статус 204."
+    ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_task(task_id: UUID, service_manager=Depends(get_service_manager)):
@@ -47,7 +55,10 @@ async def delete_task(task_id: UUID, service_manager=Depends(get_service_manager
 @router.post(
     "/{task_id}/tags",
     summary="Привязать теги к задаче",
-    description="Привязывает один или несколько тегов к задаче по указанным идентификаторам. Возвращает список идентификаторов привязанных тегов.",
+    description=(
+        "Привязывает один или несколько тегов к задаче по указанным идентификаторам. "
+        "Возвращает список идентификаторов привязанных тегов."
+    ),
     status_code=status.HTTP_201_CREATED,
 )
 async def attach_tags(task_id: UUID, data: dict, service_manager=Depends(get_service_manager)):
@@ -60,7 +71,10 @@ async def attach_tags(task_id: UUID, data: dict, service_manager=Depends(get_ser
 @router.delete(
     "/{task_id}/tags/{tag_id}",
     summary="Отвязать тег от задачи",
-    description="Удаляет привязку тега от задачи по идентификатору. При успешном выполнении возвращает статус 204.",
+    description=(
+        "Удаляет привязку тега от задачи по идентификатору. "
+        "При успешном выполнении возвращает статус 204."
+    ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def detach_tag(task_id: UUID, tag_id: UUID, service_manager=Depends(get_service_manager)):
@@ -70,7 +84,10 @@ async def detach_tag(task_id: UUID, tag_id: UUID, service_manager=Depends(get_se
 @router.get(
     "/{task_id}/comments",
     summary="Получить комментарии задачи",
-    description="Возвращает список комментариев задачи, отсортированных по времени создания (по возрастанию).",
+    description=(
+        "Возвращает список комментариев задачи, "
+        "отсортированных по времени создания (по возрастанию)."
+    ),
     status_code=status.HTTP_200_OK,
 )
 async def list_comments(
