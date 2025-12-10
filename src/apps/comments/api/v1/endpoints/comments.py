@@ -10,7 +10,7 @@ router = APIRouter(prefix="/comments")
 
 
 @router.delete(
-    path="/{comment_id}",
+    "/{comment_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Удалить комментарий",
     description=(
@@ -18,5 +18,8 @@ router = APIRouter(prefix="/comments")
         "При успешном выполнении возвращает статус 204."
     ),
 )
-async def delete_comment(comment_id: UUID, service_manager: Service = Depends(get_service_manager)):
+async def delete_comment(
+    comment_id: UUID,
+    service_manager: Service = Depends(get_service_manager),
+):
     await service_manager.comment_service().delete(comment_id)
