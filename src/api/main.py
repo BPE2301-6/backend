@@ -17,8 +17,8 @@ app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cfg.docs.allowed_ips,
-    allow_credentials=False,
+    allow_origins=["https://pp.qu1nqqy.ru", "http://localhost:5173"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
