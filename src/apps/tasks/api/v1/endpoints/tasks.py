@@ -35,7 +35,10 @@ async def get_task(
 @router.patch(
     "/{task_id}",
     summary="Обновить задачу",
-    description="Обновляет данные задачи по указанному идентификатору. Возвращает обновлённый объект.",
+    description=(
+        "Обновляет данные задачи по указанному идентификатору. "
+        "Возвращает обновлённый объект."
+    ),
 )
 async def update_task(
     task_id: UUID, data: TaskUpdateRequest, service_manager: Service = Depends(get_service_manager)
@@ -47,7 +50,10 @@ async def update_task(
 @router.post(
     "/{task_id}/move",
     summary="Переместить задачу",
-    description="Переводит задачу в другой статус по указанному идентификатору. Возвращает обновлённый объект.",
+    description=(
+        "Переводит задачу в другой статус по указанному идентификатору. "
+        "Возвращает обновлённый объект."
+    ),
 )
 async def move_task(
     task_id: UUID, data: TaskMoveRequest, service_manager: Service = Depends(get_service_manager)
@@ -59,7 +65,10 @@ async def move_task(
 @router.delete(
     "/{task_id}",
     summary="Удалить задачу",
-    description="Удаляет задачу по указанному идентификатору. При успешном выполнении возвращает статус 204.",
+    description=(
+        "Удаляет задачу по указанному идентификатору. "
+        "При успешном выполнении возвращает статус 204."
+    ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_task(task_id: UUID, service_manager: Service = Depends(get_service_manager)):

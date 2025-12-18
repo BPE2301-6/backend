@@ -28,3 +28,7 @@ class ChecklistItemServiceImpl(BaseService[ChecklistItemDTO]):
     async def get_all(self) -> list[ChecklistItemDTO]:
         items = await self.store.checklist_item_repo().get_all()
         return items
+
+    async def get_by_checklist_id(self, checklist_id: UUID) -> list[ChecklistItemDTO]:
+        items = await self.store.checklist_item_repo().get_by_checklist_id(checklist_id)
+        return items

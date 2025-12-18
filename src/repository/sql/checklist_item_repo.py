@@ -1,5 +1,6 @@
 import uuid
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import ChecklistItem
@@ -39,4 +40,16 @@ class ChecklistItemRepositoryImpl(BaseRepository[ChecklistItem]):
 
     async def get_all(self) -> list[ChecklistItemDTO]:
         items = await ChecklistItem.get_all(self.session)
+        return [map_model(i, ChecklistItemDTO) for i in items]
+
+    async def get_by_checklist_id(
+        self, checklist_id: uuid.UUID
+    ) -> list[ChecklistItemDTO]:
+        stmt = (
+            select(ChecklistItem)
+            .where(ChecklistItem.checklist_id == checklist_id)
+            .order_by(ChecklistItem.position.asc())
+        )
+        result = await self.session.execute(stmt)
+        items = result.scalars().all()
         return [map_model(i, ChecklistItemDTO) for i in items]

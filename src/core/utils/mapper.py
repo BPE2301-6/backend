@@ -9,7 +9,7 @@ T = TypeVar("T")
 U = TypeVar("U")
 
 
-def map_model(source: Any, target_type: type[U]) -> U:
+def map_model(source: Any, target_type: type[U]) -> U: # noqa: UP047
     if source is None:
         raise ValueError("Source cannot be None")
 
