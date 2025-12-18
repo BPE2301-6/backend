@@ -5,7 +5,7 @@ from pydantic import BaseModel
 T = TypeVar("T")
 
 
-class Paginated(BaseModel, Generic[T]):
+class Paginated(BaseModel, Generic[T]): # noqa: UP046
     items: list[T]
     total: int
     limit: int

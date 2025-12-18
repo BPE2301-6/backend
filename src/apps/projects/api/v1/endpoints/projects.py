@@ -43,7 +43,10 @@ async def create_project(
 @router.get(
     "",
     summary="Получить список проектов",
-    description="Возвращает список проектов. Поддерживает поиск по имени и ключу, а также пагинацию.",
+    description=(
+        "Возвращает список проектов. "
+        "Поддерживает поиск по имени и ключу, а также пагинацию."
+    ),
 )
 async def list_projects(
     search: str | None = Query(default=None),
@@ -77,7 +80,10 @@ async def get_project(
 @router.patch(
     "/{project_id}",
     summary="Обновить проект",
-    description="Обновляет данные проекта по указанному идентификатору. Возвращает обновлённый объект.",
+    description=(
+        "Обновляет данные проекта по указанному идентификатору. "
+        "Возвращает обновлённый объект."
+    ),
 )
 async def update_project(
     project_id: UUID,
@@ -94,7 +100,10 @@ async def update_project(
     "/{project_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Удалить проект",
-    description="Удаляет проект по указанному идентификатору. При успешном выполнении возвращает статус 204.",
+    description=(
+        "Удаляет проект по указанному идентификатору. "
+        "При успешном выполнении возвращает статус 204."
+    ),
 )
 async def delete_project(project_id: UUID, service_manager: Service = Depends(get_service_manager)):
     await service_manager.project_service().delete(project_id)
@@ -133,7 +142,10 @@ async def add_project_member(
 @router.patch(
     "/{project_id}/members/{user_id}",
     summary="Обновить роль участника",
-    description="Обновляет роль участника проекта по указанному идентификатору. Возвращает обновлённый объект.",
+    description=(
+        "Обновляет роль участника проекта по указанному идентификатору. "
+        "Возвращает обновлённый объект."
+    ),
     status_code=status.HTTP_200_OK,
 )
 async def update_project_member(
@@ -152,7 +164,10 @@ async def update_project_member(
 @router.delete(
     "/{project_id}/members/{user_id}",
     summary="Удалить участника проекта",
-    description="Удаляет участника проекта по указанному идентификатору. При успешном выполнении возвращает статус 204.",
+    description=(
+        "Удаляет участника проекта по указанному идентификатору. "
+        "При успешном выполнении возвращает статус 204."
+    ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_project_member(

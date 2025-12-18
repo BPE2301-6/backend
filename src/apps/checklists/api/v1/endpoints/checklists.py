@@ -5,7 +5,7 @@ from starlette import status
 
 from src.core.dependencies import get_service_manager
 from src.core.utils import map_model
-from src.schemas.pydantic import ChecklistItemResponse, ChecklistItemCreateRequest
+from src.schemas.pydantic import ChecklistItemCreateRequest, ChecklistItemResponse
 from src.services import Service
 
 router = APIRouter(prefix="/checklists")
