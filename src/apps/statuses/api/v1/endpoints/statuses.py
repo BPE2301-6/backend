@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.core.dependencies import get_service_manager
 from src.core.utils import map_model
@@ -33,10 +33,12 @@ async def update_status(
     summary="Удалить статус",
     description=(
         "Удаляет статус по указанному идентификатору. При наличии связанных задач "
-        "возвращает ошибку 400 или 409. При успешном выполнении возвращает статус 204."
+        "возвращает ошибку 409. При успешном выполнении возвращает статус 204."
     ),
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_status(status_id: UUID, service_manager: Service = Depends(get_service_manager)):
-    # TODO: проверить наличие связанных задач и вернуть 409, если они есть
+    if await service_manager.status_service().has_related_tasks(status_id):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT)
+
     await service_manager.status_service().delete(status_id)

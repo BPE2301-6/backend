@@ -43,6 +43,11 @@ class TaskRepositoryImpl(BaseRepository[Task]):
         items = await Task.get_all(self.session)
         return [map_model(i, TaskDTO) for i in items]
 
+    async def exists_by_status(self, status_id: uuid.UUID) -> bool:
+        stmt = select(Task.id).where(Task.status_id == status_id).limit(1)
+        result = await self.session.execute(stmt)
+        return result.scalars().first() is not None
+
     async def get_all_by_project(
         self, project_id: uuid.UUID, filters: dict, limit: int, offset: int, sort: str
     ) -> tuple[list[TaskDTO], int]:
