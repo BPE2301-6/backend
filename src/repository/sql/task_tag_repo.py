@@ -1,5 +1,6 @@
 import uuid
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import TaskTag
@@ -39,4 +40,10 @@ class TaskTagRepositoryImpl(BaseRepository[TaskTag]):
 
     async def get_all(self) -> list[TaskTagDTO]:
         items = await TaskTag.get_all(self.session)
+        return [map_model(i, TaskTagDTO) for i in items]
+
+    async def get_by_task_id(self, task_id: uuid.UUID) -> list[TaskTagDTO]:
+        stmt = select(TaskTag).where(TaskTag.task_id == task_id)
+        result = await self.session.execute(stmt)
+        items = result.scalars().all()
         return [map_model(i, TaskTagDTO) for i in items]

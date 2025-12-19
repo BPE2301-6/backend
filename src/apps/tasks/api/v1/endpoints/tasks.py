@@ -36,8 +36,7 @@ async def get_task(
     "/{task_id}",
     summary="Обновить задачу",
     description=(
-        "Обновляет данные задачи по указанному идентификатору. "
-        "Возвращает обновлённый объект."
+        "Обновляет данные задачи по указанному идентификатору. " "Возвращает обновлённый объект."
     ),
 )
 async def update_task(
@@ -87,11 +86,7 @@ async def delete_task(task_id: UUID, service_manager: Service = Depends(get_serv
 async def attach_tags(
     task_id: UUID, data: TaskTagRequest, service_manager: Service = Depends(get_service_manager)
 ) -> TaskTagResponse:
-    tag_ids: list[UUID] = []
-    for tag_id in data.tag_ids:
-        await service_manager.task_tag_service().create({"task_id": task_id, "tag_id": tag_id})
-        tag_ids.append(tag_id)
-    # TODO: получать tag_ids из сервиса
+    tag_ids = await service_manager.task_tag_service().attach_tags(task_id, data.tag_ids)
     return TaskTagResponse(tag_ids=tag_ids)
 
 

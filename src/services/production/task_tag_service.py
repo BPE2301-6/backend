@@ -28,3 +28,14 @@ class TaskTagServiceImpl(BaseService[TaskTagDTO]):
     async def get_all(self) -> list[TaskTagDTO]:
         items = await self.store.task_tag_repo().get_all()
         return items
+
+    async def attach_tags(self, task_id: UUID, tag_ids: list[UUID]) -> list[UUID]:
+        existing_items = await self.store.task_tag_repo().get_by_task_id(task_id)
+        existing_tag_ids = {item.tag_id for item in existing_items}
+
+        for tag_id in tag_ids:
+            if tag_id not in existing_tag_ids:
+                await self.create({"task_id": task_id, "tag_id": tag_id})
+
+        updated_items = await self.store.task_tag_repo().get_by_task_id(task_id)
+        return [item.tag_id for item in updated_items]
