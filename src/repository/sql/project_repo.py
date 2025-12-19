@@ -42,6 +42,11 @@ class ProjectRepositoryImpl(BaseRepository[Project]):
         items = await Project.get_all(self.session)
         return [map_model(i, ProjectDTO) for i in items]
 
+    async def get_key_by_id(self, project_id: uuid.UUID) -> str | None:
+        stmt = select(Project.key).where(Project.id == project_id)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
+
     async def get_list(
         self, search: str | None, limit: int, offset: int
     ) -> tuple[list[ProjectDTO], int]:

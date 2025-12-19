@@ -1,5 +1,6 @@
 import uuid
 
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.models import TaskSequence
@@ -40,3 +41,21 @@ class TaskSequenceRepositoryImpl(BaseRepository[TaskSequence]):
     async def get_all(self) -> list[TaskSequenceDTO]:
         items = await TaskSequence.get_all(self.session)
         return [map_model(i, TaskSequenceDTO) for i in items]
+
+    async def reserve_next_seq(self, project_id: uuid.UUID) -> int:
+        stmt = (
+            update(TaskSequence)
+            .where(TaskSequence.project_id == project_id)
+            .values(next_seq=TaskSequence.next_seq + 1)
+            .returning(TaskSequence.next_seq - 1)
+        )
+
+        result = await self.session.execute(stmt)
+        seq = result.scalar_one_or_none()
+
+        if seq is None:
+            item = TaskSequence(project_id=project_id, next_seq=2)
+            await item.save(self.session)
+            return 1
+
+        return seq
