@@ -29,6 +29,9 @@ class StatusServiceImpl(BaseService[StatusDTO]):
         items = await self.store.status_repo().get_all()
         return items
 
+    async def has_related_tasks(self, status_id: UUID) -> bool:
+        return await self.store.task_repo().exists_by_status(status_id)
+
     async def get_all_by_project(self, project_id: UUID) -> list[StatusDTO]:
         items = await self.store.status_repo().get_all_by_project(project_id)
         return items
