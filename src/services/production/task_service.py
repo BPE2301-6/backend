@@ -17,6 +17,14 @@ class TaskServiceImpl(BaseService[TaskDTO]):
     async def create(self, data: dict) -> TaskDTO:
         data.pop("tag_ids", None)
         # TODO: обновление таблицы task_tag
+
+        project_id: UUID = data["project_id"]
+        project_key = await self.store.project_repo().get_key_by_id(project_id)
+        seq = await self.store.task_sequence_repo().reserve_next_seq(project_id)
+
+        data["seq"] = seq
+        data["key"] = f"{project_key}-{seq}"
+
         item = await self.store.task_repo().create(data)
         return item
 
