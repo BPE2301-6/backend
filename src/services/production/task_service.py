@@ -1,7 +1,9 @@
+from datetime import UTC, datetime
 from uuid import UUID
 
 from src.repository import Store
-from src.schemas.dtos import TaskDTO
+from src.schemas.dtos import TaskDTO, TimeDeltaDTO
+from src.schemas.enums import TimeDeltaStatus
 
 from ..interfaces import BaseService
 
@@ -10,8 +12,27 @@ class TaskServiceImpl(BaseService[TaskDTO]):
     def __init__(self, store: Store):
         self.store = store
 
+    def _build_timedelta(self, updated_at: datetime) -> TimeDeltaDTO:
+        now = datetime.now(UTC)
+        seconds_passed = (now - updated_at).total_seconds()
+        week_seconds = 7 * 24 * 3600
+
+        percent = min(100, 100 * (seconds_passed / week_seconds))
+
+        days_passed = seconds_passed / 86400
+        if days_passed < 3:
+            status = TimeDeltaStatus.LOW
+        elif days_passed <= 5:
+            status = TimeDeltaStatus.MEDIUM
+        else:
+            status = TimeDeltaStatus.HIGH
+
+        return TimeDeltaDTO(status=status, delta=percent)
+
     async def get(self, item_id: UUID) -> TaskDTO | None:
         item = await self.store.task_repo().get_by_id(item_id)
+        if item:
+            item.timedelta = self._build_timedelta(item.updated_at)
         return item
 
     async def create(self, data: dict) -> TaskDTO:
@@ -26,10 +47,13 @@ class TaskServiceImpl(BaseService[TaskDTO]):
         data["key"] = f"{project_key}-{seq}"
 
         item = await self.store.task_repo().create(data)
+        item.timedelta = self._build_timedelta(item.updated_at)
         return item
 
     async def update(self, item_id: UUID, data: dict) -> TaskDTO:
         item = await self.store.task_repo().update(item_id, data)
+        if item:
+            item.timedelta = self._build_timedelta(item.updated_at)
         return item
 
     async def delete(self, item_id: UUID) -> None:
@@ -37,6 +61,8 @@ class TaskServiceImpl(BaseService[TaskDTO]):
 
     async def get_all(self) -> list[TaskDTO]:
         items = await self.store.task_repo().get_all()
+        for item in items:
+            item.timedelta = self._build_timedelta(item.updated_at)
         return items
 
     async def get_all_by_project(
@@ -45,4 +71,6 @@ class TaskServiceImpl(BaseService[TaskDTO]):
         items, total = await self.store.task_repo().get_all_by_project(
             project_id, filters, limit, offset, sort
         )
+        for item in items:
+            item.timedelta = self._build_timedelta(item.updated_at)
         return items, total
