@@ -2,7 +2,13 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
-from ..enums import TaskPriority
+from src.schemas.enums import TaskPriority, TimeDeltaStatus
+
+
+@dataclass
+class TimeDeltaDTO:
+    status: TimeDeltaStatus
+    delta: float
 
 
 @dataclass
@@ -20,3 +26,4 @@ class TaskDTO:
     due_date: datetime | None
     created_at: datetime
     updated_at: datetime
+    timedelta: TimeDeltaDTO | None = None

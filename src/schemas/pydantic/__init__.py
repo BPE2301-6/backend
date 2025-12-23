@@ -31,6 +31,7 @@ from .task import (
     TaskMoveRequest,
     TaskResponse,
     TaskUpdateRequest,
+    TimeDelta,
 )
 from .task_tag import TaskTagRequest, TaskTagResponse
 from .user import UserListResponse, UserResponse, UserUpdateRequest
@@ -66,6 +67,7 @@ __all__ = [
     "TagListResponse",
     "TaskTagRequest",
     "TaskTagResponse",
+    "TimeDelta",
     "TaskCreateRequest",
     "TaskUpdateRequest",
     "TaskMoveRequest",

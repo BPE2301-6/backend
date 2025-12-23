@@ -3,8 +3,14 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from ..enums import TaskPriority
+from src.schemas.enums import TaskPriority, TimeDeltaStatus
+
 from .common import Paginated
+
+
+class TimeDelta(BaseModel):
+    status: TimeDeltaStatus
+    delta: float
 
 
 class TaskCreateRequest(BaseModel):
@@ -45,6 +51,7 @@ class TaskResponse(BaseModel):
     due_date: date | None
     created_at: datetime
     updated_at: datetime
+    timedelta: TimeDelta
 
 
 class TaskListResponse(Paginated[TaskResponse]): ...
