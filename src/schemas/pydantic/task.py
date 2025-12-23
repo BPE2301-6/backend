@@ -3,7 +3,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from ..enums import TaskPriority, TimeDeltaStatus
+from src.schemas.enums import TaskPriority, TimeDeltaStatus
+
 from .common import Paginated
 
 

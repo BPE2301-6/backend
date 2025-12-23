@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
-from ..enums import TaskPriority, TimeDeltaStatus
+from src.schemas.enums import TaskPriority, TimeDeltaStatus
 
 
 @dataclass
